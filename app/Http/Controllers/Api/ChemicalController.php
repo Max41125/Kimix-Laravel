@@ -59,5 +59,38 @@ class ChemicalController extends Controller
 
         return response()->json(['message' => 'Chemical not found'], 404);
     }
+    // Поиск химических веществ
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('q');
+    
+        if (!$searchTerm) {
+            return response()->json(['message' => 'No search term provided'], 400);
+        }
+    
+        // Логируем полученный запрос для отладки
+        \Log::info("Search term: {$searchTerm}");
+    
+        $keywords = explode(' ', $searchTerm);
+    
+        $query = Chemical::query();
+    
+        foreach ($keywords as $keyword) {
+            $query->orWhere(function ($q) use ($keyword) {
+                $q->where('title', 'like', '%' . $keyword . '%')
+                  ->orWhere('name', 'like', '%' . $keyword . '%')
+                  ->orWhere('cas_number', 'like', '%' . $keyword . '%')
+                  ->orWhere('formula', 'like', '%' . $keyword . '%');
+            });
+        }
+    
+        $chemicals = $query->get();
+        return response()->json($chemicals);
+    }
+    
+
+
+
+
 }
 
