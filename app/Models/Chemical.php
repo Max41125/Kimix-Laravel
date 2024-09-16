@@ -18,7 +18,8 @@ class Chemical extends Model
         'description',
         'molecular_weight',
         'image',
-        'russian_common_name'
+        'russian_common_name',
+        'russian_description'
 
 
     ];

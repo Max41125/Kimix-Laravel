@@ -25,6 +25,7 @@ class ChemicalParser
         $endCID = 100; // Конечный CID
         $pageSize = 100; // Количество записей на странице
         $maxRetries = 3;
+        
         while ($startCID <= $endCID) { // Цикл по диапазону CID
             $cidRange = implode(',', range($startCID, min($startCID + $pageSize - 1, $endCID)));
             $this->command->info("Fetching CIDs: {$cidRange}"); // Отладочное сообщение
@@ -55,6 +56,7 @@ class ChemicalParser
                         // Получаем описание по CID
                         $description = $this->fetchDescriptionByCID($client, $cid);
                         $russianCommonName = $this->fetchRussianCommonName($title);
+                        $russianDescription = $this->fetchRussianDescription($description);
                         
                         // Проверяем, что имя и CID не пустые
                         if ($name && $cid) {
@@ -69,10 +71,12 @@ class ChemicalParser
                                         'molecular_weight' => $molecularWeight,
                                         'image' => $image,
                                         'russian_common_name' => $russianCommonName ?: null,
-                                        'description' => $description
+                                        'description' => $description,
+                                        'russian_description' => $russianDescription,
                                     ]
                                 );
-                                $this->fetchChemicalSynonyms($client, $cid, $maxRetries);
+                                
+                                // $this->fetchChemicalSynonyms($client, $cid, $maxRetries);
 
                                 $this->command->info("Добавлено вещество: {$name} (CID: {$cid}, CAS: {$casNumber})");
     
@@ -130,48 +134,92 @@ class ChemicalParser
         }
     }
 
-    private function fetchChemicalSynonyms($client, $cid, $maxRetries)
+    // private function fetchChemicalSynonyms($client, $cid, $maxRetries)
+    // {
+    //     $attempts = 0;
+
+    //     while ($attempts < $maxRetries) {
+    //         try {
+    //             $synonymsResponse = $client->get("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{$cid}/synonyms/JSON");
+
+    //             if ($synonymsResponse->getStatusCode() == 200) {
+    //                 $synonymsBody = $synonymsResponse->getBody()->getContents();
+    //                 $synonymsData = json_decode($synonymsBody, true);
+
+    //                 if (isset($synonymsData['InformationList']['Information'][0]['Synonym'])) {
+    //                     $synonyms = $synonymsData['InformationList']['Information'][0]['Synonym'];
+
+    //                     // Сохраняем синонимы и их переводы
+    //                     foreach ($synonyms as $synonym) {
+    //                         // Переводим синоним с помощью Google Translate
+    //                         $translatedSynonym = $this->translateSynonym($synonym);
+
+    //                         // Сохраняем оригинальный синоним и его перевод
+    //                         ChemicalSynonym::updateOrCreate(
+    //                             ['cid' => $cid, 'name' => $synonym, 'russian_name' => $translatedSynonym],
+                        
+    //                         );
+
+    //                         $this->command->info("Добавлен синоним: {$synonym} (перевод: {$translatedSynonym}) для CID: {$cid}");
+    //                     }
+    //                     return; // Выходим из функции, если успешный запрос выполнен
+    //                 } else {
+    //                     $this->command->error("Синонимы не найдены для CID: {$cid}");
+    //                     return;
+    //                 }
+    //             } elseif ($synonymsResponse->getStatusCode() == 404) {
+    //                 $attempts++;
+    //                 $this->command->info("Попытка {$attempts} для CID: {$cid} завершилась 404. Повторяем...");
+    //             } else {
+    //                 $this->command->error("Не удалось получить синонимы для CID: {$cid} с кодом статуса: " . $synonymsResponse->getStatusCode());
+    //                 return;
+    //             }
+    //         } catch (Exception $e) {
+    //             $this->command->error("Ошибка при получении синонимов: " . $e->getMessage());
+    //             return;
+    //         }
+    //     }
+
+    //     $this->command->info("Не удалось получить синонимы для CID: {$cid} после {$maxRetries} попыток.");
+    // }
+
+    private function translateSynonym($text)
     {
-        $attempts = 0;
-
-        while ($attempts < $maxRetries) {
-            try {
-                $synonymsResponse = $client->get("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{$cid}/synonyms/JSON");
-
-                if ($synonymsResponse->getStatusCode() == 200) {
-                    $synonymsBody = $synonymsResponse->getBody()->getContents();
-                    $synonymsData = json_decode($synonymsBody, true);
-
-                    if (isset($synonymsData['InformationList']['Information'][0]['Synonym'])) {
-                        $synonyms = $synonymsData['InformationList']['Information'][0]['Synonym'];
-
-                        // Сохраняем синонимы в отдельной таблице
-                        foreach ($synonyms as $synonym) {
-                            ChemicalSynonym::updateOrCreate(
-                                ['cid' => $cid, 'name' => $synonym]
-                            );
-                            $this->command->info("Добавлен синоним: {$synonym} для CID: {$cid}");
-                        }
-                        return; // Выходим из функции, если успешный запрос выполнен
-                    } else {
-                        $this->command->error("Синонимы не найдены для CID: {$cid}");
-                        return;
-                    }
-                } elseif ($synonymsResponse->getStatusCode() == 404) {
-                    $attempts++;
-                    $this->command->info("Попытка {$attempts} для CID: {$cid} завершилась 404. Повторяем...");
+        // URL для бесплатного API перевода
+        $url = "https://ftapi.pythonanywhere.com/translate?sl=en&dl=ru&text=" . urlencode($text);
+    
+        // Инициализация HTTP-клиента
+        $client = new Client([
+            'timeout' => 10, // Таймаут в секундах
+        ]);
+    
+        try {
+            // Отправка GET-запроса
+            $response = $client->get($url);
+    
+            // Проверяем успешность запроса
+            if ($response->getStatusCode() == 200) {
+                // Парсим JSON-ответ
+                $data = json_decode($response->getBody()->getContents(), true);
+    
+                // Извлекаем перевод из 'destination-text'
+                if (isset($data['destination-text'])) {
+                    return $data['destination-text']; // Возвращаем перевод
                 } else {
-                    $this->command->error("Не удалось получить синонимы для CID: {$cid} с кодом статуса: " . $synonymsResponse->getStatusCode());
-                    return;
+                    return $text; // Если перевод не найден, возвращаем оригинал
                 }
-            } catch (Exception $e) {
-                $this->command->error("Ошибка при получении синонимов: " . $e->getMessage());
-                return;
+            } else {
+                return $text; // Если ошибка в запросе, возвращаем оригинал
             }
+        } catch (Exception $e) {
+            // Логируем ошибку и возвращаем оригинал текста
+            $this->command->error("Ошибка перевода: " . $e->getMessage());
+            return $text;
         }
-
-        $this->command->info("Не удалось получить синонимы для CID: {$cid} после {$maxRetries} попыток.");
     }
+
+    // Остальные методы, такие как fetchRussianCommonName, fetchDescriptionByCID, fetchRussianDescription аналогичны и не повторяются здесь для краткости.
+
 
     private function fetchDescriptionByCID($client, $cid)
     {
@@ -198,27 +246,19 @@ class ChemicalParser
             return '';
         }
     }
-    
+
     private function fetchRussianCommonName($title)
     {
-        // Замените пробелы на знак подчеркивания для формата Wikidata
-        $formattedTitle = str_replace(' ', '_', $title);
-        
-        // Запрос к Wikidata API для поиска по названию
-        $url = "https://www.wikidata.org/w/api.php?action=wbsearchentities&search={$formattedTitle}&language=ru&format=json";
-        $client = new Client();
-        $response = $client->get($url);
-        
-        if ($response->getStatusCode() == 200) {
-            $data = json_decode($response->getBody()->getContents(), true);
-            
-            if (isset($data['search']) && !empty($data['search'])) {
-                // Возвращаем первое русскоязычное имя
-                return $data['search'][0]['label'];
-            }
-        }
-        
-        // Если ничего не найдено, возвращаем null
-        return null;
+        return $this->translateSynonym($title);
     }
+    
+    private function fetchRussianDescription($description)
+    {
+        return $this->translateSynonym($description);
+    }
+    
+
+
+
+
 }
