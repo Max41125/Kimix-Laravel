@@ -22,7 +22,7 @@ class ChemicalParser
     {
         $client = new Client();
         $startCID = 1; // Начальный CID
-        $endCID = 100; // Конечный CID
+        $endCID = 10000; // Конечный CID
         $pageSize = 100; // Количество записей на странице
         $maxRetries = 3;
         
