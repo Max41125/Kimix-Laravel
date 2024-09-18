@@ -1,9 +1,8 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
 
-// Существующие маршруты
 Route::get('/', function () {
     return view('welcome');
 });
@@ -25,5 +24,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Здесь можно добавить другие маршруты админки
 });
 
-// Подключаем маршруты для аутентификации
 require __DIR__.'/auth.php';
