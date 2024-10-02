@@ -6,7 +6,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL')], // Используем переменную окружения
+    'allowed_origins' => [
+        env('FRONTEND_URL'), // ваш продакшн домен
+        env('LOCAL_URL'),    // ваш локальный домен для разработки
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -19,3 +22,4 @@ return [
     'supports_credentials' => false,
 
 ];
+
