@@ -52,15 +52,7 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/api.php'));
     }
     
-    /**
-     * Define the "auth" routes for the application.
-     */
-    protected function mapAuthRoutes()
-    {
-        Route::middleware('web')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/auth.php'));
-    }
+
 
 
 }
