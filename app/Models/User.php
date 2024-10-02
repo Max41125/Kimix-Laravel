@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Model
 {
@@ -25,6 +26,17 @@ class User extends Model
         $this->attributes['password'] = bcrypt($password);
     }
 
+    /**
+     * Verify the user's password.
+     */
+    public function verifyPassword($password)
+    {
+        return Hash::check($password, $this->password);
+    }
+
+    /**
+     * Generate a new token.
+     */
     public function generateToken($name = 'token-name')
     {
         return $this->createToken($name)->plainTextToken;
