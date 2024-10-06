@@ -14,6 +14,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'role' => $request->role,
         ]);
 
         return response()->json(['message' => 'User registered successfully'], 201);
