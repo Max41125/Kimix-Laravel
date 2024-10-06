@@ -14,9 +14,10 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'remember' => 'boolean', // Добавлено для поддержки remember
         ]);
     
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->remember)) {
             $user = Auth::user();
             $token = $user->generateToken(); // Получаем токен
             return response()->json(['message' => 'Login successful', 'token' => $token], 200);
