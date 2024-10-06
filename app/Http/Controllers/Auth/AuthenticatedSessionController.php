@@ -16,18 +16,12 @@ class AuthenticatedSessionController extends Controller
         ]);
     
         if (Auth::attempt($credentials)) {
-            // Получаем пользователя для создания токена (если нужно)
-            $user = Auth::user();
-            $token = $user->generateToken(); // Токен может пригодиться для API
-            \Log::info('Login successful for user: ' . Auth::user()->email);
-            return response()->json([
-                'message' => 'Login successful',
-                'token' => $token,
-            ], 200);
-        }else{
-
-            \Log::error('Login failed for email: ' . $request->email);
+            return response()->json(['message' => 'Login successful'], 200);
+        } else {
+            Log::error('Login failed for email: ' . $credentials['email']);
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
+        
     
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
