@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; // Добавь эту строку
 
 class AuthenticatedSessionController extends Controller
 {
@@ -14,18 +15,14 @@ class AuthenticatedSessionController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-    
+
         if (Auth::attempt($credentials)) {
             return response()->json(['message' => 'Login successful'], 200);
-        } else {
-            Log::error('Login failed for email: ' . $credentials['email']);
-            return response()->json(['message' => 'Invalid credentials'], 401);
         }
-        
-    
+
+        Log::error('Login failed for email: ' . $credentials['email']); // Используй класс Log
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
-    
 
     public function destroy(Request $request)
     {
