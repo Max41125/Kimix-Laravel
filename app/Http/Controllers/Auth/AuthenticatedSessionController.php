@@ -17,25 +17,27 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
     
-        Log::info('Attempting login for: ', $credentials);
-    
         // Проверяем, передано ли remember для "Запомнить меня"
         $remember = $request->has('remember') ? $request->boolean('remember') : false;
+    
+        // Логируем попытку входа
+        Log::info('Attempting login for:', $credentials);
     
         // Аутентификация пользователя с флагом "Remember me"
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
+    
+            // Генерация API токена
             $token = $user->generateToken();
-            Log::info('User authenticated successfully: ', ['user_id' => $user->id]);
-            
+    
             return response()->json(['message' => 'Login successful', 'token' => $token], 200);
         }
     
-        Log::warning('Invalid login attempt with credentials: ', $credentials);
-        
         // Неверные учетные данные
+        Log::warning('Invalid login attempt with credentials:', $credentials);
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+    
     
     
     
