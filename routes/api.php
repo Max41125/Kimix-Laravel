@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChemicalController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\YourProtectedController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -16,7 +17,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
+    Route::get('/protected-route', [YourProtectedController::class, 'index']);
     Route::get('/chemicals/search', [ChemicalController::class, 'search']);
     Route::get('/chemicals', [ChemicalController::class, 'index']);
     Route::get('/chemicals/{id}', [ChemicalController::class, 'show']);

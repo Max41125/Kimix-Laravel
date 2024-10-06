@@ -15,14 +15,16 @@ class AuthenticatedSessionController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+    
         if (Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Login successful'], 200);
+            $user = Auth::user();
+            $token = $user->generateToken(); // Получаем токен
+            return response()->json(['message' => 'Login successful', 'token' => $token], 200);
         }
-
-        Log::error('Login failed for email: ' . $credentials['email']); // Используй класс Log
+    
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+    
 
     public function destroy(Request $request)
     {
