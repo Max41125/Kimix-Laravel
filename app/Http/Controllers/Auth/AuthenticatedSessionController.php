@@ -15,21 +15,17 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'remember' => 'boolean', // Для поддержки Remember Me
         ]);
     
-        // Аутентификация пользователя
-        if (Auth::attempt($credentials, $request->remember)) {
+        // Проверяем, передано ли remember для "Запомнить меня"
+        $remember = $request->has('remember') ? $request->boolean('remember') : false;
+    
+        // Аутентификация пользователя с флагом "Remember me"
+        if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
     
             // Генерация API токена
             $token = $user->generateToken();
-    
-            // Установка remember_token, если включен remember me
-            if ($request->remember) {
-                $user->setRememberToken(Str::random(60)); // Установим случайный токен
-                $user->save();
-            }
     
             return response()->json(['message' => 'Login successful', 'token' => $token], 200);
         }
@@ -37,6 +33,7 @@ class AuthenticatedSessionController extends Controller
         // Неверные учетные данные
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+    
     
 
     public function destroy(Request $request)
