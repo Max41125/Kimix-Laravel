@@ -42,8 +42,15 @@ class AuthenticatedSessionController extends Controller
     
             // Генерация API токена
             $token = $user->generateToken();
-    
-            return response()->json(['message' => 'Login successful', 'token' => $token], 200);
+            
+                // Проверка на подтверждение email
+                $verify = !is_null($user->email_verified_at);
+
+                return response()->json([
+                    'message' => 'Login successful',
+                    'token' => $token,
+                    'verify' => $verify
+                ], 200);
         }
     
         // Неверные учетные данные

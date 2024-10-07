@@ -31,6 +31,7 @@ class VerificationController extends Controller
         event(new Verified($user));
 
         // Переадресация или успешный ответ
-        return redirect('/')->with('message', 'Email verified successfully.');
+        return redirect(env('FRONTEND_URL') . '/verification-success')->with('message', 'Email verified successfully.');
+    
     }
 }
