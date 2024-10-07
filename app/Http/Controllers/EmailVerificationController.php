@@ -14,10 +14,6 @@ class EmailVerificationController extends Controller
         // Ищем пользователя по ID
         $user = User::findOrFail($id);
 
-        // Проверяем, что хэш совпадает с email пользователя
-        if (! Hash::check($user->getEmailForVerification(), $hash)) {
-            return response()->json(['message' => 'Invalid verification link'], 400);
-        }
 
         // Проверяем, не верифицирован ли email уже
         if ($user->hasVerifiedEmail()) {
