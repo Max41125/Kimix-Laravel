@@ -13,10 +13,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     
-    // Маршрут для отправки письма с подтверждением email
-    Route::get('/email/verification-notification', [RegisteredUserController::class, 'sendVerificationEmail'])
-        ->middleware('auth:sanctum')
-        ->name('verification.send');
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
