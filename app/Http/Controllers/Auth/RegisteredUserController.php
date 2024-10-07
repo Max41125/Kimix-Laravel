@@ -16,17 +16,13 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'role' => $request->role,
         ]);
-    
+
         // Генерируем событие регистрации
         event(new Registered($user));
-    
-        // Отправляем уведомление о верификации
-        $user->sendEmailVerificationNotification();
-    
+
         return response()->json(['message' => 'User registered successfully. Please check your email for verification.'], 201);
     }
-    
 }
