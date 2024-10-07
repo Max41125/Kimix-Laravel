@@ -13,10 +13,11 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => $request->password, // Теперь будет автоматически хэшироваться
             'role' => $request->role,
         ]);
-
+    
         return response()->json(['message' => 'User registered successfully'], 201);
     }
+    
 }
