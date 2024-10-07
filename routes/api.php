@@ -26,10 +26,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
-    Route::get('/chemicals/search', [ChemicalController::class, 'search']);
-    Route::get('/chemicals', [ChemicalController::class, 'index']);
-    Route::get('/chemicals/{id}', [ChemicalController::class, 'show']);
-    Route::post('/chemicals', [ChemicalController::class, 'store']);
-    Route::put('/chemicals/{id}', [ChemicalController::class, 'update']);
-    Route::delete('/chemicals/{id}', [ChemicalController::class, 'destroy']);
+ 
 });
+
+
+Route::get('/chemicals/search', [ChemicalController::class, 'search']);
+Route::get('/chemicals', [ChemicalController::class, 'index']);
+Route::get('/chemicals/{id}', [ChemicalController::class, 'show']);
+Route::post('/chemicals', [ChemicalController::class, 'store']);
+Route::put('/chemicals/{id}', [ChemicalController::class, 'update']);
+Route::delete('/chemicals/{id}', [ChemicalController::class, 'destroy']);
