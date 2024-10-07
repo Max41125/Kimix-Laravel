@@ -56,4 +56,16 @@ class AuthenticatedSessionController extends Controller
         Auth::logout();
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
+
+    public function sendVerificationEmail(Request $request)
+    {
+        // Проверяем, аутентифицирован ли пользователь
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email is already verified.'], 400);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Verification email sent'], 200);
+    }
 }
