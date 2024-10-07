@@ -19,8 +19,8 @@ class RegisteredUserController extends Controller
             'password' => $request->password,
             'role' => $request->role,
         ]);
-        
-        $user->sendEmailVerificationNotification();
+
+
         event(new Registered($user));
 
         return response()->json(['message' => 'User registered successfully. Please check your email for verification.'], 201);
