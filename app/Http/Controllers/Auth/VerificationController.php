@@ -14,6 +14,7 @@ class VerificationController extends Controller
         // Верификация email
         $request->fulfill();
 
-        return response()->json(['message' => 'Email verified successfully.'], 200);
+        
+        return redirect()->to(env('FRONTEND_URL') . '/verification-success');
     }
 }
