@@ -20,8 +20,7 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
-        // Генерируем событие регистрации
-        event(new Registered($user));
+
 
         return response()->json(['message' => 'User registered successfully. Please check your email for verification.'], 201);
     }
