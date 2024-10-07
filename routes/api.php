@@ -25,8 +25,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, '__invoke'])
-        ->middleware(['signed'])
-        ->name('verification.verify');
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
 
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
     Route::get('/chemicals/search', [ChemicalController::class, 'search']);
