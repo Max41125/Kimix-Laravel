@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChemicalController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\VerificationController; // Импортируйте контроллер верификации
 use App\Http\Controllers\YourProtectedController;
 
 Route::prefix('auth')->group(function () {
