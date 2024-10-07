@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log; // Добавь эту строку
+use Illuminate\Support\Facades\Log;
+use App\Models\User; // Убедитесь, что вы импортировали модель User
+use Illuminate\Support\Facades\Hash; // Импортируйте Hash для проверки пароля
 
 class AuthenticatedSessionController extends Controller
 {
@@ -19,7 +21,18 @@ class AuthenticatedSessionController extends Controller
     
         // Проверяем, передано ли remember для "Запомнить меня"
         $remember = $request->has('remember') ? $request->boolean('remember') : false;
-    
+
+        // Получаем пользователя по email
+        $user = User::where('email', $credentials['email'])->first();
+
+        // Проверяем, существует ли пользователь и совпадает ли пароль
+        if ($user && Hash::check($request->password, $user->password)) {
+            Log::info('Пароли совпадают для пользователя:', ['email' => $credentials['email']]);
+        } else {
+            Log::warning('Пароли не совпадают или пользователь не найден:', $credentials);
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
         // Логируем попытку входа
         Log::info('Attempting login for:', $credentials);
     
@@ -38,10 +51,6 @@ class AuthenticatedSessionController extends Controller
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
     
-    
-    
-    
-
     public function destroy(Request $request)
     {
         Auth::logout();
