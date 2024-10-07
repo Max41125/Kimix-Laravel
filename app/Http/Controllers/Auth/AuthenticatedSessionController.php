@@ -68,4 +68,14 @@ class AuthenticatedSessionController extends Controller
 
         return response()->json(['message' => 'Verification email sent'], 200);
     }
+
+    // Метод для отображения формы входа
+    public function create()
+    {
+        // Возвращаем вид формы входа
+        return view('auth.login');
+    }
+
+
+
 }
