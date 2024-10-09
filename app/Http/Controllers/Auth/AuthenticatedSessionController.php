@@ -50,6 +50,7 @@ class AuthenticatedSessionController extends Controller
                     'message' => 'Login successful',
                     'token' => $token,
                     'verify' => $verify,
+                    'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'role' => $user->role,
