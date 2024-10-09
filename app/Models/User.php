@@ -18,12 +18,22 @@ class User extends Authenticatable implements MustVerifyEmail // Реализу�
         'email',
         'password',
         'role',
+        'products',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    protected $casts = [
+        'products' => 'array', 
+    ];
+    public function chemicals()
+    {
+        return $this->belongsToMany(Chemical::class, 'chemical_user');
+    }
+
 
     /**
      * Automatically hash the password when setting it.

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChemicalController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\YourProtectedController;
@@ -14,11 +15,15 @@ Route::prefix('auth')->group(function () {
     
 });
 
+
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::put('/users/{userId}/products', [OrderController::class, 'updateProducts']);
 
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
  

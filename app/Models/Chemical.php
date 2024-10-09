@@ -28,6 +28,10 @@ class Chemical extends Model
     {
         return $this->hasMany(CasNumber::class, 'cid', 'cid');
     }
-
+    
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'chemical_user');
+    }
 
 }
