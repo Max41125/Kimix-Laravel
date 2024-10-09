@@ -43,4 +43,25 @@ class OrderController extends Controller
         return response()->json($user->chemicals, 200);
     }
     
+    public function removeProducts(Request $request, $userId)
+    {
+        // Проверяем, что поле products является массивом и все ID товаров существуют в таблице chemicals
+        $request->validate([
+            'products' => 'required|array',
+            'products.*' => 'exists:chemicals,id', // Проверка на существование ID товаров
+        ]);
+    
+        $user = User::findOrFail($userId);
+    
+        // Удаляем связи между пользователем и товарами
+        $user->chemicals()->detach($request->products);
+    
+        // Возвращаем обновленный список товаров
+        return response()->json($user->chemicals, 200);
+    }
+    
+
+
+
+
 }
