@@ -33,12 +33,14 @@ class OrderController extends Controller
             'products' => 'required|array',
             'products.*' => 'exists:chemicals,id', // Проверка на существование ID товаров
         ]);
-
+    
         $user = User::findOrFail($userId);
-
-        // Обновляем товары пользователя с учетом связи через таблицу chemical_user
-        $user->chemicals()->sync($request->products);
-
-        return response()->json($user->chemicals, 200); // Возвращаем обновленный список товаров
+    
+        // Добавляем новые товары для пользователя, не удаляя существующие
+        $user->chemicals()->attach($request->products);
+    
+        // Возвращаем обновленный список товаров
+        return response()->json($user->chemicals, 200);
     }
+    
 }
