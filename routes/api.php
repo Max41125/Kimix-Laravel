@@ -23,10 +23,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
     Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/users/{userId}/products', [OrderController::class, 'getUserProducts']);
     Route::put('/users/{userId}/products', [OrderController::class, 'updateProducts']);
-    Route::put('/users/{userId}/products/remove', [OrderController::class, 'removeProducts']);
+    Route::delete('/users/{userId}/products', [OrderController::class, 'removeProducts']);
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
- 
+   
 });
 
 

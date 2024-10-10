@@ -61,7 +61,17 @@ class OrderController extends Controller
     }
     
 
-
+    public function getUserProducts($userId)
+    {
+        // Найти пользователя
+        $user = User::findOrFail($userId);
+    
+        // Получить список связанных продуктов
+        $products = $user->chemicals;
+    
+        // Вернуть список продуктов
+        return response()->json($products, 200);
+    }
 
 
 }
