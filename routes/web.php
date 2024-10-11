@@ -18,8 +18,6 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 
 
-Route::get('/sanctum/csrf-cookie', [CustomCsrfCookieController::class, 'show'])
-    ->middleware('web');
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
