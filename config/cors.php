@@ -7,7 +7,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('FRONTEND_URL'), // ваш продакшн домен
+       'https://max41125-kimix-next-5015.twc1.net/', // ваш продакшн домен
         env('LOCAL_URL'),    // ваш локальный домен для разработки
     ],
 
