@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Illuminate\Support\Facades\Log;
 
 class VerifyCsrfToken extends Middleware
 {
@@ -20,7 +21,7 @@ class VerifyCsrfToken extends Middleware
     {
         //keep default behavior, use parent method first
         $token = parent::getTokenFromRequest($request);
-        //if token not found we will get token from cookie
+        Log::info('CSRF Token from request: ' . $token);
         if (!$token) {
             $token = $request->cookie('XSRF-TOKEN');
         }
