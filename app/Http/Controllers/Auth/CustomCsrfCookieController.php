@@ -18,15 +18,20 @@ class CustomCsrfCookieController extends CsrfCookieController
      */
     public function show(Request $request)
     {
-        // Генерируем CSRF токен
-        $csrfToken = csrf_token();
+        // Получаем CSRF токен из куки
+        $token = $request->cookie('XSRF-TOKEN');
 
-        // Устанавливаем CSRF токен в куки
-        $cookie = Cookie::make('XSRF-TOKEN', $csrfToken, 120, null, null, true, true);
+        // Если токен не установлен, генерируем новый
+        if (!$token) {
+            $token = csrf_token();
+            $cookie = Cookie::make('XSRF-TOKEN', $token, 120, null, null, true, true);
+        } else {
+            $cookie = null; // Куки не нужно устанавливать, если токен уже существует
+        }
 
         // Если запрос ожидает JSON, возвращаем ответ 200 с CSRF токеном
         if ($request->expectsJson()) {
-            return (new JsonResponse(['csrfToken' => $csrfToken], 200))->withCookie($cookie);
+            return (new JsonResponse(['csrfToken' => $token], 200))->withCookie($cookie);
         }
 
         // В противном случае возвращаем обычный ответ с кодом 200
