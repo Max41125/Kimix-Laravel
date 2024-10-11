@@ -17,8 +17,17 @@ Route::get('/', function () {
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])
-    ->middleware('web');
+Route::get('/sanctum/csrf-cookie', function () {
+   
+    $controller = new CsrfCookieController();
+    $response = $controller->show();
+
+    // Дополнительная обработка ответа
+    return response()->json([
+        'message' => 'CSRF token set',
+        'data' => json_decode($response->getContent()), // Возвращаем тело ответа
+    ], 200);
+})->middleware('web');
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
