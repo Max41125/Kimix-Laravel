@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Verified;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,7 +17,8 @@ Route::get('/', function () {
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])
+    ->middleware('web');
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
