@@ -88,7 +88,16 @@ class ChemicalController extends Controller
         return response()->json($chemicals);
     }
     
-
+    public function getSuppliersByChemicalId($chemicalId)
+    {
+        // Находим химическое вещество по ID
+        $chemical = Chemical::findOrFail($chemicalId);
+    
+        // Получаем поставщиков, связанных с этим химическим веществом
+        $suppliers = $chemical->users; // Предполагается, что у вас настроена связь `users()` в модели Chemical
+    
+        return response()->json($suppliers, 200);
+    }
 
 
 
