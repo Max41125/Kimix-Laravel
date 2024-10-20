@@ -92,10 +92,11 @@ class ChemicalController extends Controller
     {
         // Находим химическое вещество по ID
         $chemical = Chemical::findOrFail($chemicalId);
-    
-        // Получаем поставщиков, связанных с этим химическим веществом
-        $suppliers = $chemical->users; // Предполагается, что у вас настроена связь `users()` в модели Chemical
-    
+        
+        // Получаем поставщиков с данными из таблицы pivot (chemical_user)
+        $suppliers = $chemical->users()->select('users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
+            ->get();
+        
         return response()->json($suppliers, 200);
     }
 
