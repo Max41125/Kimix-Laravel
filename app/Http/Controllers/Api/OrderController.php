@@ -15,12 +15,14 @@ class OrderController extends Controller
             'user_id' => 'required|exists:users,id',
             'products' => 'required|array',
             'total_price' => 'required|numeric',
+            'unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
         ]);
 
         $order = Order::create([
             'user_id' => $request->user_id,
             'products' => $request->products,
             'total_price' => $request->total_price,
+            'unit_type' => $request->unit_type,
         ]);
 
         return response()->json($order, 201);
@@ -28,16 +30,19 @@ class OrderController extends Controller
 
     public function updateProducts(Request $request, $userId)
     {
-        // Проверяем, что поле products является массивом и все ID товаров существуют в таблице chemicals
+        // Проверяем, что поле products является массивом, что ID товаров существуют и что unit_type имеет допустимые значения
         $request->validate([
             'products' => 'required|array',
-            'products.*' => 'exists:chemicals,id', // Проверка на существование ID товаров
+            'products.*.id' => 'exists:chemicals,id', // Проверка на существование ID товаров
+            'products.*.unit_type' => 'required|string|in:grams,kilograms,tons,pieces', // Проверка на типы единиц
         ]);
     
         $user = User::findOrFail($userId);
     
-        // Добавляем новые товары для пользователя, не удаляя существующие
-        $user->chemicals()->attach($request->products);
+        // Обрабатываем каждый продукт и добавляем его вместе с типом единицы
+        foreach ($request->products as $product) {
+            $user->chemicals()->attach($product['id'], ['unit_type' => $product['unit_type']]);
+        }
     
         // Возвращаем обновленный список товаров
         return response()->json($user->chemicals, 200);

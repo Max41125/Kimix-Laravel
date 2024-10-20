@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'products',
         'total_price',
+        'unit_type',
     ];
 
     protected $casts = [
