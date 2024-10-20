@@ -16,6 +16,7 @@ class OrderController extends Controller
             'products' => 'required|array',
             'total_price' => 'required|numeric',
             'unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
+            'currency' => 'required|string|in:RUB,USD,EUR,CNY', // Проверка валюты
         ]);
 
         $order = Order::create([
@@ -23,6 +24,7 @@ class OrderController extends Controller
             'products' => $request->products,
             'total_price' => $request->total_price,
             'unit_type' => $request->unit_type,
+            'currency' => $request->currency, // Сохраняем валюту
         ]);
 
         return response()->json($order, 201);
@@ -30,20 +32,26 @@ class OrderController extends Controller
 
     public function updateProducts(Request $request, $userId)
     {
-        // Проверяем, что поле products является массивом, что ID товаров существуют и что unit_type имеет допустимые значения
+        // Проверяем, что поле products является массивом, что ID товаров существуют, и что unit_type, price и currency имеют допустимые значения
         $request->validate([
             'products' => 'required|array',
             'products.*.id' => 'exists:chemicals,id', // Проверка на существование ID товаров
             'products.*.unit_type' => 'required|string|in:grams,kilograms,tons,pieces', // Проверка на типы единиц
+            'products.*.price' => 'required|numeric|min:0', // Проверка на цену
+            'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY', // Проверка валюты
         ]);
-    
+
         $user = User::findOrFail($userId);
-    
-        // Обрабатываем каждый продукт и добавляем его вместе с типом единицы
+
+        // Обрабатываем каждый продукт и добавляем его вместе с типом единицы и ценой
         foreach ($request->products as $product) {
-            $user->chemicals()->attach($product['id'], ['unit_type' => $product['unit_type']]);
+            $user->chemicals()->attach($product['id'], [
+                'unit_type' => $product['unit_type'],
+                'price' => $product['price'], // Добавляем цену
+                'currency' => $product['currency'], // Добавляем валюту
+            ]);
         }
-    
+
         // Возвращаем обновленный список товаров
         return response()->json($user->chemicals, 200);
     }
@@ -77,6 +85,4 @@ class OrderController extends Controller
         // Вернуть список продуктов
         return response()->json($products, 200);
     }
-
-
 }
