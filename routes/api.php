@@ -12,7 +12,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-    
+    Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
 });
 
 
@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/users/{userId}/products', [OrderController::class, 'updateProducts']);
     Route::delete('/users/{userId}/products', [OrderController::class, 'removeProducts']);
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
-    Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
+    
 
    
 });
