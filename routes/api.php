@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/users/{userId}/products', [OrderController::class, 'updateProducts']);
     Route::delete('/users/{userId}/products', [OrderController::class, 'removeProducts']);
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
-    Route::get('chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
+    Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
 
    
 });
