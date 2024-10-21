@@ -94,7 +94,7 @@ class ChemicalController extends Controller
         $chemical = Chemical::findOrFail($chemicalId);
         
         // Получаем поставщиков с данными из таблицы pivot (chemical_user)
-        $suppliers = $chemical->users()->select('users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
+        $suppliers = $chemical->users()->select('users.id','users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
             ->get();
         
         return response()->json($suppliers, 200);
