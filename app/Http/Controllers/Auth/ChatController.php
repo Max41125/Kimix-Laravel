@@ -26,4 +26,12 @@ class ChatController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function fetchMessages($orderId)
+    {
+        // Retrieve messages for the specified order ID
+        $messages = Message::where('order_id', $orderId)->get();
+
+        return response()->json($messages);
+    }
 }

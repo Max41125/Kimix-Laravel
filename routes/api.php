@@ -15,6 +15,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
+    Route::get('/chat/{order_id}', [ChatController::class, 'fetchMessages']);
 
 });
 
@@ -31,6 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/users/{userId}/products', [OrderController::class, 'removeProducts']);
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
     Route::get('/user/{userId}/orders', [OrderController::class, 'getUserOrders']);
+    
 
    
 });
