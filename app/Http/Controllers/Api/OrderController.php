@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\UserAddress;
 
 class OrderController extends Controller
 {
@@ -14,20 +15,53 @@ class OrderController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'products' => 'required|array',
+            'products.*.id' => 'exists:chemicals,id', // Each product must exist
+            'products.*.unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
+            'products.*.price' => 'required|numeric|min:0',
+            'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY',
             'total_price' => 'required|numeric',
-            'unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
-            'currency' => 'required|string|in:RUB,USD,EUR,CNY', // Проверка валюты
+            'currency' => 'required|string|in:RUB,USD,EUR,CNY',
+            // User address fields
+            'city' => 'required|string',
+            'street' => 'required|string',
+            'house' => 'required|string',
+            'building' => 'nullable|string',
+            'office' => 'nullable|string',
+            'phone' => 'required|string',
+            'inn' => 'nullable|string',
         ]);
-
+    
+        // Create or update the user's address
+        $address = UserAddress::updateOrCreate(
+            ['user_id' => $request->user_id],
+            [
+                'city' => $request->city,
+                'street' => $request->street,
+                'house' => $request->house,
+                'building' => $request->building,
+                'office' => $request->office,
+                'phone' => $request->phone,
+                'inn' => $request->inn,
+            ]
+        );
+    
+        // Create the order
         $order = Order::create([
             'user_id' => $request->user_id,
-            'products' => $request->products,
             'total_price' => $request->total_price,
-            'unit_type' => $request->unit_type,
-            'currency' => $request->currency, // Сохраняем валюту
+            'currency' => $request->currency,
         ]);
-
-        return response()->json($order, 201);
+    
+        // Attach products to the order with their details
+        foreach ($request->products as $product) {
+            $order->products()->attach($product['id'], [
+                'unit_type' => $product['unit_type'],
+                'price' => $product['price'],
+                'currency' => $product['currency'],
+            ]);
+        }
+    
+        return response()->json(['order' => $order, 'address' => $address], 201);
     }
 
     public function updateProducts(Request $request, $userId)

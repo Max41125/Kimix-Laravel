@@ -11,15 +11,18 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'products',
         'total_price',
-        'unit_type',
+        'currency', 
     ];
 
     protected $casts = [
         'products' => 'array', // Автоматическое преобразование JSON в массив и обратно
     ];
 
+    public function products()
+    {
+        return $this->belongsToMany(Chemical::class)->withPivot('unit_type', 'price', 'currency');
+    }
     // Связь с пользователем
     public function user()
     {
