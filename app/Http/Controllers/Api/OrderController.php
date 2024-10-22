@@ -19,6 +19,7 @@ class OrderController extends Controller
             'products.*.unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
             'products.*.price' => 'required|numeric|min:0',
             'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY',
+            'products.*.supplier_id' => 'required|exists:users,id', // Добавлено поле supplier_id
             'total_price' => 'required|numeric',
             'currency' => 'required|string|in:RUB,USD,EUR,CNY',
             // User address fields
@@ -52,17 +53,19 @@ class OrderController extends Controller
             'currency' => $request->currency,
         ]);
     
-        // Attach products to the order with their details
+        // Attach products to the order with their details, including supplier_id
         foreach ($request->products as $product) {
             $order->products()->attach($product['id'], [
                 'unit_type' => $product['unit_type'],
                 'price' => $product['price'],
                 'currency' => $product['currency'],
+                'supplier_id' => $product['supplier_id'], // Добавлено поле supplier_id
             ]);
         }
     
         return response()->json(['order' => $order, 'address' => $address], 201);
     }
+    
 
     public function updateProducts(Request $request, $userId)
     {
