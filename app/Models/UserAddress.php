@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class UserAddress extends Model
 {
     use HasFactory;
+
+    // Разрешенные для массового присвоения поля
+    protected $fillable = [
+        'user_id',
+        'city',
+        'street',
+        'house',
+        'building',
+        'office',
+        'phone',
+        'inn',
+    ];
 }
