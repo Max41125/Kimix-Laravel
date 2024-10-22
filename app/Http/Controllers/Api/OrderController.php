@@ -119,4 +119,21 @@ class OrderController extends Controller
         // Вернуть список продуктов
         return response()->json($products, 200);
     }
+
+
+    public function getUserOrders($userId)
+    {
+        // Найти пользователя
+        $user = User::findOrFail($userId);
+    
+        // Получить заказы пользователя
+        $orders = $user->orders; 
+    
+        // Вернуть список заказов
+        return response()->json($orders, 200);
+    }
+    
+
+
+
 }
