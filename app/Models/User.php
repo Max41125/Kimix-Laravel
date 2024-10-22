@@ -33,7 +33,11 @@ class User extends Authenticatable implements MustVerifyEmail // Реализу�
     {
         return $this->belongsToMany(Chemical::class, 'chemical_user');
     }
-
+    
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
     /**
      * Automatically hash the password when setting it.

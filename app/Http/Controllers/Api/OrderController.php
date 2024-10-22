@@ -125,13 +125,14 @@ class OrderController extends Controller
     {
         // Найти пользователя
         $user = User::findOrFail($userId);
-    
-        // Получить заказы пользователя
-        $orders = $user->orders; 
-    
-        // Вернуть список заказов
+        
+        // Получить заказы пользователя с продуктами
+        $orders = $user->orders()->with('products')->get(); 
+        
+        // Вернуть список заказов с продуктами
         return response()->json($orders, 200);
     }
+    
     
 
 
