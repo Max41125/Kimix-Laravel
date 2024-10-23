@@ -27,3 +27,7 @@ Route::get('/email/verify', function () {
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
+Route::post('/broadcasting/auth', function() {
+    \Log::info('Запрос к /broadcasting/auth достиг системы');
+    return response()->json(['status' => 'ok']);
+});
