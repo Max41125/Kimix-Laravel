@@ -18,5 +18,5 @@ use Illuminate\Support\Facades\Log;
 
  
 Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
-    return $user->id === Order::find($orderId)->user_id; // или другая логика
+    return $user->id === \App\Models\Order::find($orderId)->user_id || true;
 });

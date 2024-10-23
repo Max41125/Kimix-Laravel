@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Auth\CustomCsrfCookieController;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +25,5 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 // Маршрут для подтверждения электронной почты
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
