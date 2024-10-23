@@ -18,6 +18,5 @@ use Illuminate\Support\Facades\Log;
 
  
 Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
-    Log::info("User {$user->id} trying to subscribe to chat channel {$orderId}");
-    return true; // или ваше условие авторизации
+    return $user->id === Order::find($orderId)->user_id; // или другая логика
 });
