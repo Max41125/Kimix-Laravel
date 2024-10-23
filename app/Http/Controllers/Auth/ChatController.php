@@ -24,7 +24,7 @@ class ChatController extends Controller
         $orderId = $request->input('order_id'); // Get order_id from the request
 
         Log::info('Sending message', ['message' => $message, 'user_id' => $userId, 'order_id' => $orderId]);
-        broadcast(new MessageSent($message, $userId, $orderId))->toOthers();
+        event(new MessageSent($message, $userId, $orderId))->toOthers();
 
         return response()->json(['success' => true]);
     }
