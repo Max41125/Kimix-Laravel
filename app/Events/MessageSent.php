@@ -30,7 +30,7 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'MessageSent'; // Это имя события, на которое вы подписываетесь на фронтенде
+        return 'messageSent'; // Это имя события, на которое вы подписываетесь на фронтенде
     }
 
     public function broadcastWith()
