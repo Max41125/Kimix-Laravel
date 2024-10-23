@@ -35,9 +35,15 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastWith()
     {   
+        Log::info('Broadcasting with data', [
+            'message' => $this->message,
+            'user_id' => $this->userId,
+            'order_id' => $this->orderId,
+        ]);
+    
         return [
-            'message' => $this->message, // Передаем сообщение
-            'user_id' => $this->userId,   // Передаем userId
+            'message' => $this->message,
+            'user_id' => $this->userId,
             'order_id' => $this->orderId,
         ];
     }
