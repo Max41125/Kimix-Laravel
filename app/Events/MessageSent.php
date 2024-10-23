@@ -25,7 +25,7 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('private-chat.' . $this->orderId); // Убедитесь, что имя канала правильное
+        return new PrivateChannel('chat.' . $this->orderId); // Убедитесь, что имя канала правильное
     }
 
     public function broadcastAs()
@@ -36,8 +36,9 @@ class MessageSent implements ShouldBroadcast
     public function broadcastWith()
     {   
         return [
-            'user_id' => $this->userId, // Используйте userId вместо user_id
-            'message' => $this->message,
+            'message' => $this->message, // Передаем сообщение
+            'user_id' => $this->userId,   // Передаем userId
+            'order_id' => $this->orderId,
         ];
     }
 }
