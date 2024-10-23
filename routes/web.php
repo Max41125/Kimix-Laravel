@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Auth\CustomCsrfCookieController;
 use Illuminate\Support\Facades\Broadcast;
-use App\Http\Controllers\Auth\BroadcastAuthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,5 +26,4 @@ Route::get('/email/verify', function () {
 // Маршрут для подтверждения электронной почты
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
-
-Route::post('/broadcasting/auth', [BroadcastAuthController::class, 'authorize']);
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
