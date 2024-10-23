@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
+use App\Models\Order;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
-
-    return true; // Для тестирования, разрешим доступ всем авторизованным пользователям
+ 
+Broadcast::channel('chat.{orderId}', function (User $user, int $orderId) {
+    return $user->id === Order::findOrNew($orderId)->user_id;
 });
