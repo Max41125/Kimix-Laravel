@@ -18,5 +18,9 @@ use Illuminate\Support\Facades\Log;
 
  
 Broadcast::channel('private-chat.{orderId}', function ($user, $orderId) {
-    return ['orderId' => $orderId];
+    \Log::info('Checking access for user ' . $user->id . ' to order ' . $orderId);
+    $orderOwnerId = getOrderOwnerId($orderId);
+    \Log::info('Order owner is: ' . $orderOwnerId);
+    
+    return (int) $user->id === (int) $orderOwnerId;
 });
