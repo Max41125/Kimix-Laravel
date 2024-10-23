@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -22,7 +23,7 @@ class ChatController extends Controller
         $userId = $request->input('user_id');
         $orderId = $request->input('order_id'); // Get order_id from the request
 
-        // Call the event and pass the orderId along with the message and userId
+        Log::info('Sending message', ['message' => $message, 'user_id' => $userId, 'order_id' => $orderId]);
         broadcast(new MessageSent($message, $userId, $orderId))->toOthers();
 
         return response()->json(['success' => true]);
