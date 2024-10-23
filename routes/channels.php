@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Broadcast;
 
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -17,6 +18,6 @@ use App\Models\User;
 
  
 Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
-    // Проверьте, что пользователь имеет доступ к этому заказу
+    Log::info("User {$user->id} trying to subscribe to chat channel {$orderId}");
     return true; // или ваше условие авторизации
 });
