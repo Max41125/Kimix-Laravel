@@ -17,6 +17,6 @@ use Illuminate\Support\Facades\Log;
 */
 
  
-Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
+Broadcast::channel('private-chat.{orderId}', function ($user, $orderId) {
     return  true;
 });
