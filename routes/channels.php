@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Log;
  
 
  
-Broadcast::channel('orders.{orderId}', function (User $user, int $orderId) {
+Broadcast::channel('private-chat.{orderId}', function (User $user, int $orderId) {
+    \Log::info('Авторизация для пользователя', ['user' => $user, 'orderId' => $orderId]);
+    
     return $user->id === Order::findOrNew($orderId)->user_id;
 });
