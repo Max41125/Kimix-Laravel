@@ -27,5 +27,5 @@ Route::get('/email/verify', function () {
 // Маршрут для подтверждения электронной почты
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
-Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
 Route::post('/broadcasting/auth', [BroadcastAuthController::class, 'authorize']);
