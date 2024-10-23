@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Log;
 */
 
  
-Broadcast::channel('chat.{orderId}', function ($user, $orderId) {
-    return true;
+
+ 
+Broadcast::channel('orders.{orderId}', function (User $user, int $orderId) {
+    return $user->id === Order::findOrNew($orderId)->user_id;
 });
