@@ -18,9 +18,19 @@ use Illuminate\Support\Facades\Log;
 
  
 
- 
 Broadcast::channel('private-chat.{orderId}', function (User $user, int $orderId) {
-    \Log::info('Авторизация для пользователя', ['user' => $user, 'orderId' => $orderId]);
-    
-    return $user->id === Order::findOrNew($orderId)->user_id;
+    \Log::info('Авторизация для пользователя', ['user_id' => $user->id, 'orderId' => $orderId]);
+
+    $order = Order::find($orderId);
+
+    if (!$order) {
+        \Log::info('Заказ не найден', ['orderId' => $orderId]);
+        return false;
+    }
+
+    $authorized = $user->id === $order->user_id;
+
+    \Log::info('Результат авторизации', ['authorized' => $authorized]);
+
+    return $authorized;
 });
