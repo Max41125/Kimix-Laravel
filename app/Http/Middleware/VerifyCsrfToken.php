@@ -13,7 +13,8 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'http://localhost/*', // Добавьте localhost сюда
+        'http://127.0.0.1/*', // Если вы используете 127.0.0.1
     ];
 
     //add our custom getTokenFromRequest function
