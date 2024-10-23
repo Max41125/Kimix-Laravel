@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ChatController;
 use App\Http\Controllers\YourProtectedController;
+use App\Http\Controllers\BroadcastAuthController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -16,6 +17,7 @@ Route::prefix('auth')->group(function () {
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::get('/chat/{order_id}', [ChatController::class, 'fetchMessages']);
+    Route::post('/custom-broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
 
 });
 
