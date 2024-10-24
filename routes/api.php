@@ -16,8 +16,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
-    Route::get('/chat/{order_id}', [ChatController::class, 'fetchMessages']);
-
+    Route::get('/chat/messages/{orderId}', [ChatController::class, 'getMessages']);
 
 });
 

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Message;
 
 class MessageSent implements ShouldBroadcast
 {
@@ -23,6 +23,13 @@ class MessageSent implements ShouldBroadcast
 
     public function __construct($message, $userId, $orderId, $username)
     {
+
+        Message::create([
+            'user_id' => $userId,
+            'order_id' => $orderId,
+            'message' => $message,
+        ]);
+
         $this->message = $message;
         $this->userId = $userId; // Сохраните userId
         $this->orderId = $orderId; // Сохраните orderId
