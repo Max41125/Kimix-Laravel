@@ -21,7 +21,7 @@ class MessageSent implements ShouldBroadcast
     public $orderId; // Хранение orderId
     public $username;
 
-    public function __construct($message, $userId, $orderId)
+    public function __construct($message, $userId, $orderId, $username)
     {
         $this->message = $message;
         $this->userId = $userId; // Сохраните userId
