@@ -16,7 +16,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 // Приватный канал чата для заказов
-Broadcast::channel('private-chat.{orderId}', function (User $user, $orderId) {
+Broadcast::channel('chat.{orderId}', function (User $user, $orderId) {
 
     
     return true;
