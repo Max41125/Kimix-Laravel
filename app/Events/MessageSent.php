@@ -4,44 +4,49 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+
 
 class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
-    public $userId; 
-    public $orderId;
+    public $userId; // Измените на правильное имя переменной, если нужно
+    public $orderId; // Хранение orderId
 
     public function __construct($message, $userId, $orderId)
     {
-        Log::info('MessageSent event created', [
-            'message' => $message,
-            'userId' => $userId,
-            'orderId' => $orderId,
-        ]);
-        
         $this->message = $message;
-        $this->userId = $userId;
-        $this->orderId = $orderId;
+        $this->userId = $userId; // Сохраните userId
+        $this->orderId = $orderId; // Сохраните orderId
     }
 
     public function broadcastOn()
     {
-        return new Channel('chat.' . $this->orderId);
+        Log::info('Broadcasting on channel', ['channel' => 'chat.' . $this->orderId]);
+        return [new Channel('chat.' . $this->orderId)]; // Убедитесь, что имя канала правильное
     }
 
     public function broadcastAs()
     {
-        return 'Sent';
+        Log::info('Событие сработало');
+        return 'messageSent'; // Это имя события, на которое вы подписываетесь на фронтенде
     }
 
     public function broadcastWith()
     {   
+        Log::info('Broadcasting with data', [
+            'message' => $this->message,
+            'user_id' => $this->userId,
+            'order_id' => $this->orderId,
+        ]);
+    
         return [
             'message' => $this->message,
             'user_id' => $this->userId,
