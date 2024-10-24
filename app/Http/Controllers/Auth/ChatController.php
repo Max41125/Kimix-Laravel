@@ -16,7 +16,7 @@ class ChatController extends Controller
         $request->validate([
             'message' => 'required|string',
             'user_id' => 'required|integer',
-            'order_id' => 'required|integer', // Validate order_id
+            'order_id' => 'required|string', // Validate order_id
         ]);
 
         $message = $request->input('message');
