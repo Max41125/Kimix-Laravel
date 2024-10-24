@@ -13,9 +13,10 @@ class Message extends Model
     protected $fillable = ['user_id', 'message', 'order_id'];
 
 
+    // Определяем связь с моделью User
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id'); // Указываем поле user_id
     }
 
     // Определяем связь с заказом, если требуется
