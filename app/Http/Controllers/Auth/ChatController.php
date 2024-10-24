@@ -16,15 +16,17 @@ class ChatController extends Controller
         $request->validate([
             'message' => 'required|string',
             'user_id' => 'required|integer',
-            'order_id' => 'required|string', // Validate order_id
+            'order_id' => 'required|string',
+            'username' => 'required|string',
         ]);
 
         $message = $request->input('message');
         $userId = $request->input('user_id');
         $orderId = $request->input('order_id'); // Get order_id from the request
+        $username = $request->input('username'); // Get username from the request
 
         Log::info('Sending message', ['message' => $message, 'user_id' => $userId, 'order_id' => $orderId]);
-        event(new MessageSent($message, $userId, $orderId));
+        event(new MessageSent($message, $userId, $orderId, $username));
 
         return response()->json(['success' => true]);
     }
