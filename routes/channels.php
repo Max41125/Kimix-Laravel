@@ -10,7 +10,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 // Приватный канал чата для заказов
-Broadcast::channel('private-chat.{orderId}', function (User $user, int $orderId) {
+Broadcast::channel('private-chat.{orderId}', function (User $user, $orderId) {
     // Найдем заказ и проверим, является ли пользователь владельцем заказа
     return $user->id === Order::findOrNew($orderId)->user_id;
 });
