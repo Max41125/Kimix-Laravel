@@ -38,7 +38,11 @@ class User extends Authenticatable implements MustVerifyEmail // Реализу�
     {
         return $this->hasMany(Order::class);
     }
-
+    
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
     /**
      * Automatically hash the password when setting it.
      */
