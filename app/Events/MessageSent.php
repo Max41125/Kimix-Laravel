@@ -41,18 +41,4 @@ class MessageSent implements ShouldBroadcast
         return 'messageSent'; // Это имя события, на которое вы подписываетесь на фронтенде
     }
 
-    public function broadcastWith()
-    {   
-        Log::info('Broadcasting with data', [
-            'message' => $this->message,
-            'user_id' => $this->userId,
-            'order_id' => $this->orderId,
-        ]);
-    
-        return [
-            'message' => $this->message,
-            'user_id' => $this->userId,
-            'order_id' => $this->orderId,
-        ];
-    }
 }
