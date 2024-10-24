@@ -33,7 +33,23 @@ class ChatController extends Controller
 
     public function getMessages($orderId)
     {
-        $messages = Message::where('order_id', $orderId)->get();
-        return response()->json($messages); // Возвращаем сообщения в формате JSON
+        // Получаем сообщения с загруженными данными о пользователях
+        $messages = Message::with('user') // Загружаем связанные данные о пользователе
+            ->where('order_id', $orderId)
+            ->get();
+    
+        // Преобразуем коллекцию сообщений в массив с необходимыми полями
+        $messagesWithUsernames = $messages->map(function ($message) {
+            return [
+                'id' => $message->id,
+                'message' => $message->message,
+                'user_id' => $message->user_id,
+                'username' => $message->user ? $message->user->name : null, // Получаем имя пользователя
+                'order_id' => $message->order_id,
+            ];
+        });
+    
+        return response()->json($messagesWithUsernames); // Возвращаем сообщения в формате JSON
     }
+    
 }
