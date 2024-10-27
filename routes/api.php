@@ -17,7 +17,8 @@ Route::prefix('auth')->group(function () {
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::get('/chat/messages/{orderId}', [ChatController::class, 'getMessages']);
-
+    Route::post('/chat/upload', [ChatController::class, 'uploadDocument']);
+    Route::get('/chat/documents/{orderId}', [ChatController::class, 'getDocuments']);
 });
 
 

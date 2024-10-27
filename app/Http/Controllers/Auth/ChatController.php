@@ -52,4 +52,38 @@ class ChatController extends Controller
         return response()->json($messagesWithUsernames); // Возвращаем сообщения в формате JSON
     }
     
+    public function uploadDocument(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:pdf,doc,docx|max:10240', // Максимум 10MB
+            'order_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        // Сохраняем файл на диске
+        $path = $request->file('file')->store('documents');
+
+        // Сохраняем информацию о файле в базе данных
+        $document = Document::create([
+            'user_id' => $request->input('user_id'),
+            'order_id' => $request->input('order_id'),
+            'filename' => $request->file('file')->getClientOriginalName(),
+            'path' => $path,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'document' => $document,
+        ]);
+    }
+
+    public function getDocuments($orderId)
+    {
+        // Получаем документы, связанные с указанным заказом
+        $documents = Document::where('order_id', $orderId)->get();
+
+        return response()->json($documents);
+    }
+
+
 }
