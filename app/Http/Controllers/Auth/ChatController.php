@@ -61,18 +61,18 @@ class ChatController extends Controller
             'user_id' => 'required|integer',
         ]);
     
-        // Сохраняем файл в папку 'public/documents', чтобы он был доступен через символическую ссылку
+        // Сохраняем файл в 'public/documents', чтобы получить корректный публичный путь
         $path = $request->file('file')->store('public/documents');
     
         // Преобразуем путь для публичного доступа
-        $publicPath = str_replace('public/', 'storage/', $path);
+        $publicPath = '/storage' . str_replace('public', '', $path);
     
         // Сохраняем информацию о файле в базе данных
         $document = Document::create([
             'user_id' => $request->input('user_id'),
             'order_id' => $request->input('order_id'),
             'filename' => $request->file('file')->getClientOriginalName(),
-            'path' => $publicPath, // Используем публичный путь для ссылки
+            'path' => $publicPath, // Сохраняем публичный путь
         ]);
     
         return response()->json([
@@ -80,6 +80,7 @@ class ChatController extends Controller
             'document' => $document,
         ]);
     }
+    
 
     public function getDocuments($orderId)
     {
