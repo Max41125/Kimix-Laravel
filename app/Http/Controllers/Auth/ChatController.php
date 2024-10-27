@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Models\Document;
 
 class ChatController extends Controller
 {
