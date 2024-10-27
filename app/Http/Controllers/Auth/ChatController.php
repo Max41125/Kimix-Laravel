@@ -60,18 +60,21 @@ class ChatController extends Controller
             'order_id' => 'required|integer',
             'user_id' => 'required|integer',
         ]);
-
-        // Сохраняем файл на диске
-        $path = $request->file('file')->store('documents');
-
+    
+        // Сохраняем файл в папку 'public/documents', чтобы он был доступен через символическую ссылку
+        $path = $request->file('file')->store('public/documents');
+    
+        // Преобразуем путь для публичного доступа
+        $publicPath = str_replace('public/', 'storage/', $path);
+    
         // Сохраняем информацию о файле в базе данных
         $document = Document::create([
             'user_id' => $request->input('user_id'),
             'order_id' => $request->input('order_id'),
             'filename' => $request->file('file')->getClientOriginalName(),
-            'path' => $path,
+            'path' => $publicPath, // Используем публичный путь для ссылки
         ]);
-
+    
         return response()->json([
             'success' => true,
             'document' => $document,
