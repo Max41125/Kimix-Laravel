@@ -18,13 +18,16 @@ class ChemicalController extends Controller
     // Получение одной записи по ID
     public function show($id)
     {
-        $chemical = Chemical::find($id);
+        $chemical = Chemical::with('chemicalSynonyms') // подгружаем синонимы
+        ->find($id);
 
         if ($chemical) {
-            return response()->json($chemical);
+            // Возвращаем данные химического вещества и синонимы
+            return response()->json([
+                'chemical' => $chemical,
+                'synonyms' => $chemical->chemicalSynonyms, // синонимы
+            ]);
         }
-
-        return response()->json(['message' => 'Chemical not found'], 404);
     }
 
     // Добавление нового химического вещества
