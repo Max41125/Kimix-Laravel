@@ -84,8 +84,8 @@ class ChemicalController extends Controller
                   ->orWhereRaw('LOWER(cas_number) LIKE ?', ["%{$keyword}%"])
                   ->orWhereRaw('LOWER(formula) LIKE ?', ["%{$keyword}%"])
                   ->orWhereRaw('LOWER(russian_common_name) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('LOWER(inchi) LIKE ?', ["%{$keyword}%"])  // В запросе заменено на 'inchi'
-                  ->orWhereRaw('LOWER(smiles) LIKE ?', ["%{$keyword}%"]); // В запросе заменено на 'smiles'
+                  ->orWhereRaw('InChi LIKE ?', ["%{$keyword}%"])  // В запросе заменено на 'inchi'
+                  ->orWhereRaw('Smiles LIKE ?', ["%{$keyword}%"]); // В запросе заменено на 'smiles'
             });
         }
     
