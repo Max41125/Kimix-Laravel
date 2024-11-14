@@ -79,27 +79,27 @@ class ChemicalController extends Controller
         // Для каждого ключевого слова строим условия поиска
         foreach ($keywords as $keyword) {
             $query->orWhere(function ($q) use ($keyword) {
-                $q->whereRaw('title LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('name LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('cas_number LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('formula LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('russian_common_name LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('InChi LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('Smiles LIKE ?', ['%' . strtolower($keyword) . '%']);
+                $q->whereRaw('LOWER(title) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(cas_number) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(formula) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(russian_common_name) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(inchi) LIKE LOWER(?)', ['%' . $keyword . '%'])
+                  ->orWhereRaw('LOWER(smiles) LIKE LOWER(?)', ['%' . $keyword . '%']);
             });
         }
         
         // Добавление синонимов в поиск (поиск по таблице chemical_synonyms)
         $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
-            $q->whereRaw('name LIKE ?', ['%' . strtolower($searchTerm) . '%'])
-              ->orWhereRaw('russian_name LIKE ?', ['%' . strtolower($searchTerm) . '%']);
+            $q->whereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $searchTerm . '%'])
+              ->orWhereRaw('LOWER(russian_name) LIKE LOWER(?)', ['%' . $searchTerm . '%']);
         });
         
-    
         // Выполнение запроса
         $chemicals = $query->get();
-    
+        
         return response()->json($chemicals);
+        
     }
     
     
