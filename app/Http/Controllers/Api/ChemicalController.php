@@ -71,22 +71,39 @@ class ChemicalController extends Controller
         // Логируем полученный запрос для отладки
         \Log::info("Search term: {$searchTerm}");
     
+        // Разбиваем поисковую строку на ключевые слова
         $keywords = explode(' ', $searchTerm);
     
         $query = Chemical::query();
     
+        // Для каждого ключевого слова строим условия поиска
         foreach ($keywords as $keyword) {
             $query->orWhere(function ($q) use ($keyword) {
-                $q->where('title', 'like', '%' . $keyword . '%')
-                  ->orWhere('name', 'like', '%' . $keyword . '%')
-                  ->orWhere('cas_number', 'like', '%' . $keyword . '%')
-                  ->orWhere('formula', 'like', '%' . $keyword . '%');
+                // Поиск по основным полям
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  ->orWhereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  ->orWhereRaw('LOWER(cas_number) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  ->orWhereRaw('LOWER(formula) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  ->orWhereRaw('LOWER(russian_common_name) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  // Поиск по InChI
+                  ->orWhereRaw('LOWER(InChi) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  // Поиск по SMILES
+                  ->orWhereRaw('LOWER(Smiles) LIKE ?', ['%' . strtolower($keyword) . '%']);
             });
         }
     
+        // Добавление синонимов в поиск (поиск по таблице chemical_synonyms)
+        $query->orWhereHas('synonyms', function ($q) use ($searchTerm) {
+            $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+              ->orWhereRaw('LOWER(russian_name) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
+        });
+    
+        // Выполнение запроса
         $chemicals = $query->get();
+    
         return response()->json($chemicals);
     }
+    
     
     public function getSuppliersByChemicalId($chemicalId)
     {
