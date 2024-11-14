@@ -73,8 +73,8 @@ class ChemicalParser
                                         'russian_common_name' => $russianCommonName ?: null,
                                         'description' => $description,
                                         'russian_description' => $russianDescription,
-                                        'InChi' => $InChI,
-                                        'Smiles' => $CanonicalSMILES,
+                                        'inchi' => $InChI,
+                                        'smiles' => $CanonicalSMILES,
                                     ]
                                 );
                                

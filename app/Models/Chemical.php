@@ -20,8 +20,8 @@ class Chemical extends Model
         'image',
         'russian_common_name',
         'russian_description',
-        'InChi',
-        'Smiles',
+        'inchi',
+        'smiles',
 
     ];
 
