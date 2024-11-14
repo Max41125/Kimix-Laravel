@@ -164,11 +164,11 @@ class ChemicalParser
                             
                             if (Chemical::where('cid', $cid)->exists()) {
 
-                                $this->command->info("Получение перевода синонима для  CID: {$cid} : {$synonym} завершилась. Перевод {$translatedSynonym}...");
+                               
                                 
                                 ChemicalSynonym::updateOrCreate(
-                                    ['cid' => $cid, 'name' => $synonym],
-                                    ['russian_name' => $translatedSynonym]
+                                    ['cid' => $cid, 'name' => $synonym, 'russian_name' => $translatedSynonym],
+                                 
                                 );
                             } else {
                                 $this->command->error("Соединение с CID: {$cid} отсутствует в таблице chemicals, синонимы не будут добавлены.");

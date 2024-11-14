@@ -9,10 +9,11 @@ class ChemicalSynonym extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cid', 'name'];
+    protected $fillable = ['cid', 'name', 'russian_name'];
 
-    public function compound()
+    public function chemical()
     {
-        return $this->belongsTo(Compound::class, 'cid', 'cid');
+        return $this->belongsTo(Chemical::class, 'cid', 'cid');
     }
+    
 }

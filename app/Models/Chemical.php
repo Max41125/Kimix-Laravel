@@ -25,10 +25,11 @@ class Chemical extends Model
 
     ];
 
-    public function ChemicalSynonyms()
+    public function chemicalSynonyms()
     {
-        return $this->hasMany(CasNumber::class, 'cid', 'cid');
+        return $this->hasMany(ChemicalSynonym::class, 'cid', 'cid');
     }
+    
     
     public function users()
     {

@@ -93,7 +93,7 @@ class ChemicalController extends Controller
         }
     
         // Добавление синонимов в поиск (поиск по таблице chemical_synonyms)
-        $query->orWhereHas('synonyms', function ($q) use ($searchTerm) {
+        $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
             $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
               ->orWhereRaw('LOWER(russian_name) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
         });
