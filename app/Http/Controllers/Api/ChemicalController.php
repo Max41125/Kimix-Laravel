@@ -79,20 +79,20 @@ class ChemicalController extends Controller
         // Для каждого ключевого слова строим условия поиска
         foreach ($keywords as $keyword) {
             $query->orWhere(function ($q) use ($keyword) {
-                $q->whereRaw('LOWER(title) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('LOWER(cas_number) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('LOWER(formula) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('LOWER(russian_common_name) LIKE ?', ["%{$keyword}%"])
-                  ->orWhereRaw('InChi LIKE ?', ["%{$keyword}%"])  // В запросе заменено на 'inchi'
-                  ->orWhereRaw('Smiles LIKE ?', ["%{$keyword}%"]); // В запросе заменено на 'smiles'
+                $q->where('title', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('name', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('cas_number', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('formula', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('russian_common_name', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('InChi', 'like', '%' . strtolower($keyword) . '%')
+                ->orWhere('Smiles', 'like', '%' . strtolower($keyword) . '%');
             });
         }
     
         // Добавление синонимов в поиск (поиск по таблице chemical_synonyms)
         $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
             $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
-              ->orWhereRaw('LOWER(russian_name) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
+            ->orWhereRaw('LOWER(russian_name) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
         });
     
         // Выполнение запроса
