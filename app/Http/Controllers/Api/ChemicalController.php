@@ -79,16 +79,13 @@ class ChemicalController extends Controller
         // Для каждого ключевого слова строим условия поиска
         foreach ($keywords as $keyword) {
             $query->orWhere(function ($q) use ($keyword) {
-                // Поиск по основным полям
-                $q->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(cas_number) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(formula) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(russian_common_name) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  // Поиск по InChI
-                  ->orWhereRaw('LOWER(InChi) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  // Поиск по SMILES
-                  ->orWhereRaw('LOWER(Smiles) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$keyword}%"])
+                  ->orWhereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"])
+                  ->orWhereRaw('LOWER(cas_number) LIKE ?', ["%{$keyword}%"])
+                  ->orWhereRaw('LOWER(formula) LIKE ?', ["%{$keyword}%"])
+                  ->orWhereRaw('LOWER(russian_common_name) LIKE ?', ["%{$keyword}%"])
+                  ->orWhereRaw('LOWER(inchi) LIKE ?', ["%{$keyword}%"])  // В запросе заменено на 'inchi'
+                  ->orWhereRaw('LOWER(smiles) LIKE ?', ["%{$keyword}%"]); // В запросе заменено на 'smiles'
             });
         }
     
