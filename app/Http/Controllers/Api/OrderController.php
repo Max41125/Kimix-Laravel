@@ -139,19 +139,18 @@ class OrderController extends Controller
     
     public function getSellerOrders($sellerId)
     {
-        // Проверка, существует ли продавец
         $seller = User::findOrFail($sellerId);
 
         // Получение всех заказов, где продавец указан как supplier_id
         $orders = Order::whereHas('products', function ($query) use ($sellerId) {
             $query->wherePivot('supplier_id', $sellerId); // Условие для связи через pivot
         })->with(['products' => function ($query) use ($sellerId) {
-            $query->wherePivot('supplier_id', $sellerId)
-                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula') // Указываем только необходимые поля из chemicals
-                  ->withPivot('unit_type', 'price', 'currency', 'supplier_id'); // Выбор данных из chemical_order
+            $query->wherePivot('supplier_id', $sellerId) // Фильтруем по supplier_id
+                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula') // Выбираем необходимые поля из chemicals
+                  ->withPivot('unit_type', 'price', 'currency'); // Добавляем данные из pivot таблицы
         }])->get();
     
-        // Возвращаем заказы вместе с их продуктами
+        // Возвращаем заказы с продуктами
         return response()->json($orders, 200);
     }
     
