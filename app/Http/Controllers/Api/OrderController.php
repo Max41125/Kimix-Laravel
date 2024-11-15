@@ -136,25 +136,28 @@ class OrderController extends Controller
         return response()->json($orders, 200);
     }
     
-    
     public function getSellerOrders($sellerId)
     {
         // Получаем все химические вещества, добавленные продавцом
-        $products = User::findOrFail($sellerId)->chemicals()->withPivot(['unit_type', 'price', 'currency', 'supplier_id'])->get();
+        $products = User::findOrFail($sellerId)->chemicals()->withPivot(['unit_type', 'price', 'currency', 'user_id'])->get();
     
         // Извлекаем все заказы, которые содержат продукты, добавленные этим продавцом
         $orders = Order::whereHas('products', function ($query) use ($products) {
-            // Создаем фильтрацию для каждого химического вещества продавца
-            $query->whereIn('chemical_id', $products->pluck('id'))->wherePivot('user_id', $products->first()->pivot->supplier_id);
-        })->with(['products' => function ($query) use ($products) {
-            // Возвращаем продукты, добавленные этим продавцом
+            // Фильтруем продукты по user_id (продавец)
             $query->whereIn('chemical_id', $products->pluck('id'))
-                  ->wherePivot('supplier_id', $products->first()->pivot->supplier_id)  // Фильтруем по продавцу
-                  ->withPivot('unit_type', 'price', 'currency');  // Даем доступ к полям pivot
-        }])->get();
+                  ->wherePivot('user_id', $products->first()->pivot->user_id); // Фильтруем по user_id (который является supplier_id)
+        })
+        ->with(['products' => function ($query) use ($products) {
+            // Загружаем продукты, добавленные продавцом
+            $query->whereIn('chemical_id', $products->pluck('id'))
+                  ->wherePivot('user_id', $products->first()->pivot->user_id)  // Фильтруем по user_id
+                  ->withPivot('unit_type', 'price', 'currency');  // Получаем данные из pivot
+        }])
+        ->get();
     
         return response()->json($orders, 200);
     }
+    
     
     
     
