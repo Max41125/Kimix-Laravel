@@ -141,14 +141,14 @@ class OrderController extends Controller
     {
         // Проверка, существует ли продавец
         $seller = User::findOrFail($sellerId);
-    
-        // Получение всех заказов, где продавец указан как supplier_id в связанной таблице
+
+        // Получение всех заказов, где продавец указан как supplier_id
         $orders = Order::whereHas('products', function ($query) use ($sellerId) {
-            $query->where('chemical_order.supplier_id', $sellerId); // Указание таблицы
+            $query->wherePivot('supplier_id', $sellerId); // Условие для связи через pivot
         })->with(['products' => function ($query) use ($sellerId) {
-            // Явное указание таблиц и выбор полей для связанных данных
             $query->wherePivot('supplier_id', $sellerId)
-                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula', 'chemicals.price');
+                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula') // Указываем только необходимые поля из chemicals
+                  ->withPivot('unit_type', 'price', 'currency', 'supplier_id'); // Выбор данных из chemical_order
         }])->get();
     
         // Возвращаем заказы вместе с их продуктами
