@@ -145,7 +145,7 @@ class OrderController extends Controller
         // Извлекаем все заказы, которые содержат продукты, добавленные этим продавцом
         $orders = Order::whereHas('products', function ($query) use ($products) {
             // Создаем фильтрацию для каждого химического вещества продавца
-            $query->whereIn('chemical_id', $products->pluck('id'))->wherePivot('supplier_id', $products->first()->pivot->supplier_id);
+            $query->whereIn('chemical_id', $products->pluck('id'))->wherePivot('user_id', $products->first()->pivot->supplier_id);
         })->with(['products' => function ($query) use ($products) {
             // Возвращаем продукты, добавленные этим продавцом
             $query->whereIn('chemical_id', $products->pluck('id'))
