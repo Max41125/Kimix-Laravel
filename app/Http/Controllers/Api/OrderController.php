@@ -137,7 +137,24 @@ class OrderController extends Controller
     }
     
     
-
+    public function getSellerOrders($sellerId)
+    {
+        // Проверка, существует ли продавец
+        $seller = User::findOrFail($sellerId);
+    
+        // Получение всех заказов, где продавец указан как supplier_id в связанной таблице
+        $orders = Order::whereHas('products', function ($query) use ($sellerId) {
+            $query->where('supplier_id', $sellerId);
+        })->with(['products' => function ($query) use ($sellerId) {
+            // Загружаем только продукты, которые связаны с данным продавцом
+            $query->wherePivot('supplier_id', $sellerId)
+                  ->select(['id', 'name', 'formula', 'price']); // Выбираем нужные поля
+        }])->get();
+    
+        // Возвращаем заказы вместе с их продуктами
+        return response()->json($orders, 200);
+    }
+    
 
 
 }
