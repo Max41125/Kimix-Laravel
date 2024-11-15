@@ -139,20 +139,23 @@ class OrderController extends Controller
     
     public function getSellerOrders($sellerId)
     {
-        $seller = User::findOrFail($sellerId);
-
-        // Получение всех заказов, где продавец указан как supplier_id
-        $orders = Order::whereHas('products', function ($query) use ($sellerId) {
-            $query->wherePivot('supplier_id', $sellerId); // Условие для связи через pivot
-        })->with(['products' => function ($query) use ($sellerId) {
-            $query->wherePivot('supplier_id', $sellerId) // Фильтруем по supplier_id
-                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula') // Выбираем необходимые поля из chemicals
-                  ->withPivot('unit_type', 'price', 'currency'); // Добавляем данные из pivot таблицы
+        // Получаем все химические вещества, добавленные продавцом
+        $products = User::findOrFail($sellerId)->chemicals()->withPivot(['unit_type', 'price', 'currency', 'supplier_id'])->get();
+    
+        // Извлекаем все заказы, которые содержат продукты, добавленные этим продавцом
+        $orders = Order::whereHas('products', function ($query) use ($products) {
+            // Создаем фильтрацию для каждого химического вещества продавца
+            $query->whereIn('chemical_id', $products->pluck('id'))->wherePivot('supplier_id', $products->first()->pivot->supplier_id);
+        })->with(['products' => function ($query) use ($products) {
+            // Возвращаем продукты, добавленные этим продавцом
+            $query->whereIn('chemical_id', $products->pluck('id'))
+                  ->wherePivot('supplier_id', $products->first()->pivot->supplier_id)  // Фильтруем по продавцу
+                  ->withPivot('unit_type', 'price', 'currency');  // Даем доступ к полям pivot
         }])->get();
     
-        // Возвращаем заказы с продуктами
         return response()->json($orders, 200);
     }
+    
     
     
 
