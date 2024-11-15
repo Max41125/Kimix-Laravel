@@ -144,16 +144,17 @@ class OrderController extends Controller
     
         // Получение всех заказов, где продавец указан как supplier_id в связанной таблице
         $orders = Order::whereHas('products', function ($query) use ($sellerId) {
-            $query->where('supplier_id', $sellerId);
+            $query->where('chemical_order.supplier_id', $sellerId); // Указание таблицы
         })->with(['products' => function ($query) use ($sellerId) {
-            // Загружаем только продукты, которые связаны с данным продавцом
+            // Явное указание таблиц и выбор полей для связанных данных
             $query->wherePivot('supplier_id', $sellerId)
-                  ->select(['id', 'name', 'formula', 'price']); // Выбираем нужные поля
+                  ->select('chemicals.id', 'chemicals.name', 'chemicals.formula', 'chemicals.price');
         }])->get();
     
         // Возвращаем заказы вместе с их продуктами
         return response()->json($orders, 200);
     }
+    
     
 
 
