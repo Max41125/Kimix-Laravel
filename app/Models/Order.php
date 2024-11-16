@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'total_price',
         'currency', 
+        'status',
     ];
 
     protected $casts = [
@@ -28,4 +29,16 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static $statuses = [
+        'new' => 'Новый заказ',
+        'contract_verification' => 'Проверка контракта',
+        'waiting_payment' => 'Ожидание оплаты',
+        'packing' => 'Комплектация',
+        'shipping' => 'Отгрузка',
+        'shipped' => 'Отгружен',
+    ];
+    
+
+
 }

@@ -51,6 +51,7 @@ class OrderController extends Controller
             'user_id' => $request->user_id,
             'total_price' => $request->total_price,
             'currency' => $request->currency,
+            'status' => 'new',
         ]);
     
         // Attach products to the order with their details, including supplier_id
@@ -153,7 +154,24 @@ class OrderController extends Controller
     }
     
     
+    public function getOrderStatus($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return response()->json(['status' => $order->status, 'current_status' => Order::$statuses[$order->status]], 200);
+    }
     
+    public function updateOrderStatus(Request $request, $orderId)
+    {
+        $request->validate([
+            'status' => 'required|string|in:' . implode(',', array_keys(Order::$statuses)),
+        ]);
+    
+        $order = Order::findOrFail($orderId);
+        $order->status = $request->status;
+        $order->save();
+    
+        return response()->json(['message' => 'Статус обновлен', 'order' => $order], 200);
+    }
     
 
 

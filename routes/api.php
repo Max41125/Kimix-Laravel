@@ -35,7 +35,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
     Route::get('/user/{userId}/orders', [OrderController::class, 'getUserOrders']);
     Route::get('/seller/{sellerId}/orders', [OrderController::class, 'getSellerOrders']);
-
+    Route::get('/orders/{orderId}/status', [OrderController::class, 'getOrderStatus']); 
+    Route::patch('/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
+    
    
 });
 
