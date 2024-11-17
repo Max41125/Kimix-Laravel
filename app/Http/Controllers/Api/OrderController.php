@@ -18,6 +18,7 @@ class OrderController extends Controller
             'products.*.id' => 'exists:chemicals,id', // Each product must exist
             'products.*.unit_type' => 'required|string|in:grams,kilograms,tons,pieces',
             'products.*.price' => 'required|numeric|min:0',
+            'products.*.quantity' => 'required|numeric|min:0',
             'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY',
             'products.*.supplier_id' => 'required|exists:users,id', // Добавлено поле supplier_id
             'total_price' => 'required|numeric',
@@ -59,6 +60,7 @@ class OrderController extends Controller
             $order->products()->attach($product['id'], [
                 'unit_type' => $product['unit_type'],
                 'price' => $product['price'],
+                'quantity' => $product['quantity'],
                 'currency' => $product['currency'],
                 'supplier_id' => $product['supplier_id'], // Добавлено поле supplier_id
             ]);
