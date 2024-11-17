@@ -37,9 +37,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/seller/{sellerId}/orders', [OrderController::class, 'getSellerOrders']);
     Route::get('/orders/{orderId}/status', [OrderController::class, 'getOrderStatus']); 
     Route::patch('/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
-    Route::get('/seller', [SellerController::class, 'show']);
-    Route::post('/seller', [SellerController::class, 'store']);
-    Route::put('/seller', [SellerController::class, 'update']);
+    Route::get('/seller/{sellerId}', [SellerController::class, 'show']); // Получить данные продавца
+    Route::post('/seller', [SellerController::class, 'updateSellerInfo']);
 
 
 
