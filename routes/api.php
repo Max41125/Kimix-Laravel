@@ -34,6 +34,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/users/{userId}/products', [OrderController::class, 'removeProducts']);
     Route::get('/protected-route', [YourProtectedController::class, 'index']);
     Route::get('/user/{userId}/orders', [OrderController::class, 'getUserOrders']);
+    
+    Route::get('/user/order/{orderId}', [OrderController::class, 'getSellerOrder']);
     Route::get('/seller/{sellerId}/orders', [OrderController::class, 'getSellerOrders']);
     Route::get('/orders/{orderId}/status', [OrderController::class, 'getOrderStatus']); 
     Route::patch('/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
