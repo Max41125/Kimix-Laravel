@@ -153,7 +153,7 @@ class OrderController extends Controller
         return response()->json($orders, 200);
     }
     
-    public function getUserOrder($userId, $orderId)
+    public function getUserOrder($orderId)
     {
         // Найти пользователя
         $order = Order::findOrFail($orderId);
