@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ChatController;
 use App\Http\Controllers\YourProtectedController;
-
+use App\Http\Controllers\Api\SellerController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -37,7 +37,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/seller/{sellerId}/orders', [OrderController::class, 'getSellerOrders']);
     Route::get('/orders/{orderId}/status', [OrderController::class, 'getOrderStatus']); 
     Route::patch('/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
-    
+    Route::get('/seller', [SellerController::class, 'show']);
+    Route::post('/seller', [SellerController::class, 'store']);
+    Route::put('/seller', [SellerController::class, 'update']);
+
+
+
+
    
 });
 

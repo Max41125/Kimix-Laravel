@@ -83,4 +83,11 @@ class User extends Authenticatable implements MustVerifyEmail // Реализу�
     {
         return !is_null($this->email_verified_at);
     }
+
+    public function seller()
+    {
+        return $this->hasOne(Seller::class);
+    }
+    
+
 }
