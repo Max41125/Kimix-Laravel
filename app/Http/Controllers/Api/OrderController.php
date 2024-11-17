@@ -156,7 +156,15 @@ class OrderController extends Controller
     public function getUserOrder($orderId)
     {
         // Найти пользователя
-        $order = Order::findOrFail($orderId);
+        $order = Order::whereHas('products', function ($query) use ($orderId) {
+            $query->where('chemical_order.order_id', $orderId);
+        })
+        ->with(['products' => function ($query) use ($orderId) {
+            // Загружаем все продукты для этих заказов и фильтруем по sellerId
+            $query->where('chemical_order.order_id', $orderId)
+                ->withPivot('unit_type', 'price', 'currency', 'supplier_id');
+        }])
+        ->get();
         
         // Вернуть список заказов с продуктами
         return response()->json($order, 200);
