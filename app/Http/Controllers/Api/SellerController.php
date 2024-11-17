@@ -14,7 +14,7 @@ class SellerController extends Controller
         $seller = Seller::where('user_id', $sellerId)->first();
 
         if (!$seller) {
-            return response()->json(['message' => 'Seller not found'], 404);
+            return response()->json(['message' => 'Seller not found'], 200);
         }
 
         return response()->json($seller);
