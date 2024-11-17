@@ -87,7 +87,7 @@ class OrderController extends Controller
         foreach ($request->products as $product) {
             $user->chemicals()->attach($product['id'], [
                 'unit_type' => $product['unit_type'],
-                'price' => $product['price'], // Добавляем цену
+                'price' => $product['price'],// Добавляем цену
                 'currency' => $product['currency'], // Добавляем валюту
             ]);
         }
@@ -148,7 +148,7 @@ class OrderController extends Controller
         ->with(['products' => function ($query) use ($sellerId) {
             // Загружаем все продукты для этих заказов и фильтруем по sellerId
             $query->where('chemical_order.supplier_id', $sellerId)
-                ->withPivot('unit_type', 'price', 'currency', 'supplier_id');
+                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id');
         }])
         ->get();
 
@@ -164,7 +164,7 @@ class OrderController extends Controller
         ->with(['products' => function ($query) use ($orderId) {
             // Загружаем все продукты для этих заказов и фильтруем по sellerId
             $query->where('chemical_order.order_id', $orderId)
-                ->withPivot('unit_type', 'price', 'currency', 'supplier_id');
+                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id');
         }])
         ->get();
         
