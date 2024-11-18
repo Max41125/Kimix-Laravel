@@ -31,7 +31,7 @@ class SellerController extends Controller
             'actual_address' => 'nullable|string',
             'email' => 'nullable|email',
             'phone' => 'nullable|string',
-            'inn' => 'nullable|string|unique:sellers,inn,' . ($request->seller_id ?? 'NULL'),
+            'inn' => 'nullable|string:sellers,inn,' . ($request->seller_id ?? 'NULL'),
             'kpp' => 'nullable|string',
             'ogrn' => 'nullable|string',
             'director' => 'nullable|string',
