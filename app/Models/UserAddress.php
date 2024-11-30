@@ -19,5 +19,6 @@ class UserAddress extends Model
         'office',
         'phone',
         'inn',
+        'buyer_fullname',
     ];
 }

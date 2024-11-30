@@ -31,6 +31,7 @@ class OrderController extends Controller
             'office' => 'nullable|string',
             'phone' => 'required|string',
             'inn' => 'nullable|string',
+            'buyer_fullname' => 'nullable|string',
         ]);
     
         // Create or update the user's address
@@ -44,6 +45,7 @@ class OrderController extends Controller
                 'office' => $request->office,
                 'phone' => $request->phone,
                 'inn' => $request->inn,
+                'buyer_fullname' => $request->buyer_fullname,
             ]
         );
     
