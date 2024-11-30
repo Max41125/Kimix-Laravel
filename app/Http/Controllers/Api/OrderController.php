@@ -227,7 +227,7 @@ class OrderController extends Controller
         // Возвращаем успешный ответ
         return response()->json([
             'message' => 'Contract order created or updated successfully',
-            'contract_order' => $contractOrder,
+            'contract_orders' => $contractOrder,
         ], 200);
     }
 

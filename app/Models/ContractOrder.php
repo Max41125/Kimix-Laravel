@@ -10,7 +10,7 @@ class ContractOrder extends Model
     use HasFactory;
 
     // Таблица связана с этой моделью
-    protected $table = 'contract_order';
+    protected $table = 'contract_orders';
 
     // Поля, которые можно массово заполнять
     protected $fillable = [
