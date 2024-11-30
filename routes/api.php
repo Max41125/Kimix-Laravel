@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ChatController;
 use App\Http\Controllers\YourProtectedController;
 use App\Http\Controllers\Api\SellerController;
+use App\Http\Controllers\Api\UserAddressController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -40,7 +41,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
     Route::get('/seller/{sellerId}', [SellerController::class, 'show']); // Получить данные продавца
     Route::post('/seller', [SellerController::class, 'updateSellerInfo']);
-
+    Route::post('/user-address', [UserAddressController::class, 'storeOrUpdate']); // Сохранить или обновить
+    Route::get('/user-address/{userId}', [UserAddressController::class, 'getByUserId']); // Получить по ID
+    Route::delete('/user-address/{userId}', [UserAddressController::class, 'deleteByUserId']); // Удалить по ID
 
 
 
