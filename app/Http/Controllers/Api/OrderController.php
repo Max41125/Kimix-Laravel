@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\UserAddress;
+use App\Models\ContractOrder;
 
 class OrderController extends Controller
 {
@@ -202,6 +203,50 @@ class OrderController extends Controller
         return response()->json(['message' => 'Статус обновлен', 'order' => $order], 200);
     }
     
+    public function createContractOrder(Request $request)
+    {
+        // Валидация входных данных
+        $request->validate([
+            'language' => 'required|string|in:ru,en',
+            'order_id' => 'required|exists:orders,id',
+            'user_id' => 'required|exists:users,id', // Убедиться, что пользователь существует
+        ]);
+    
+        // Создаем или обновляем запись в таблице contract_order
+        $contractOrder = ContractOrder::updateOrCreate(
+            [
+                'order_id' => $request->order_id,
+                'user_id' => $request->user_id,
+            ],
+            [
+                'language' => $request->language,
+                'updated_at' => now(),
+            ]
+        );
+    
+        // Возвращаем успешный ответ
+        return response()->json([
+            'message' => 'Contract order created or updated successfully',
+            'contract_order' => $contractOrder,
+        ], 200);
+    }
 
+
+    public function getContractOrder(Request $request, $orderId)
+    {
+        // Проверяем, что переданный order_id существует
+        $contractOrder = ContractOrder::where('order_id', $orderId)->first();
+    
+        if (!$contractOrder) {
+            return response()->json(['error' => 'Contract order not found'], 404);
+        }
+    
+        return response()->json([
+            'message' => 'Contract order retrieved successfully',
+            'contract_order' => $contractOrder,
+        ], 200);
+    }
+    
+    
 
 }

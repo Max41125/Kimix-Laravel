@@ -44,8 +44,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/user-address', [UserAddressController::class, 'storeOrUpdate']); // Сохранить или обновить
     Route::get('/user-address/{userId}', [UserAddressController::class, 'getByUserId']); // Получить по ID
     Route::delete('/user-address/{userId}', [UserAddressController::class, 'deleteByUserId']); // Удалить по ID
-
-
+    Route::post('/contract-orders', [OrderController::class, 'createContractOrder']);
+    Route::get('/contract-orders/{orderId}', [OrderController::class, 'getContractOrder']);
 
    
 });
