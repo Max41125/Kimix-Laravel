@@ -15,7 +15,7 @@ class ParseChemicals extends Command
         $this->info('Starting the parsing process...');
 
         $parser = new ChemicalParser($this); // Передаем текущий объект Command
-        $totalChemicals = 10000; // Предположим, что мы парсим 100 веществ
+        $totalChemicals = 3000000; // Предположим, что мы парсим 3000000 веществ
         $this->info("Total chemicals to parse: {$totalChemicals}");
 
         $parser->parseAll(); // Вызываем метод парсинга

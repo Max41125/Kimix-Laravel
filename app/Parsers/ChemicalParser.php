@@ -21,8 +21,8 @@ class ChemicalParser
     public function parseAll()
     {
         $client = new Client();
-        $startCID = 1; // Начальный CID
-        $endCID = 10000; // Конечный CID
+        $startCID = 1700; // Начальный CID
+        $endCID = 3000000; // Конечный CID
         $pageSize = 100; // Количество записей на странице
         $maxRetries = 3;
         
