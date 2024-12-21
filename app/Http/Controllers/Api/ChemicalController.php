@@ -66,44 +66,39 @@ class ChemicalController extends Controller
     public function search(Request $request)
     {
         $searchTerm = $request->input('q');
-    
+
         if (!$searchTerm) {
             return response()->json(['message' => 'No search term provided'], 400);
         }
-    
+
         // Логируем полученный запрос для отладки
         \Log::info("Search term: {$searchTerm}");
-    
-        // Разбиваем поисковую строку на ключевые слова
-        $keywords = explode(' ', $searchTerm);
-    
+
+        // Выполняем точный поиск в таблице chemicals
         $query = Chemical::query();
-    
-        // Для каждого ключевого слова строим условия поиска
-        foreach ($keywords as $keyword) {
-            $query->orWhere(function ($q) use ($keyword) {
-                $q->whereRaw('LOWER(title) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(cas_number) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(formula) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(russian_common_name) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(inchi) LIKE LOWER(?)', ['%' . $keyword . '%'])
-                  ->orWhereRaw('LOWER(smiles) LIKE LOWER(?)', ['%' . $keyword . '%']);
-            });
-        }
-        
-        // Добавление синонимов в поиск (поиск по таблице chemical_synonyms)
-        $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
-            $q->whereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $searchTerm . '%'])
-              ->orWhereRaw('LOWER(russian_name) LIKE LOWER(?)', ['%' . $searchTerm . '%']);
+
+        $query->where(function ($q) use ($searchTerm) {
+            $q->whereRaw('LOWER(title) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(name) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(cas_number) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(formula) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(russian_common_name) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(inchi) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(smiles) = LOWER(?)', [$searchTerm]);
         });
-        
+
+        // Добавляем точный поиск по синонимам (таблица chemical_synonyms)
+        $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
+            $q->whereRaw('LOWER(name) = LOWER(?)', [$searchTerm])
+            ->orWhereRaw('LOWER(russian_name) = LOWER(?)', [$searchTerm]);
+        });
+
         // Выполнение запроса
         $chemicals = $query->get();
-        
+
         return response()->json($chemicals);
-        
     }
+
     
     
     public function getSuppliersByChemicalId($chemicalId)
