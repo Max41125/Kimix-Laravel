@@ -55,31 +55,64 @@ class ChatController extends Controller
     
     public function uploadDocument(Request $request)
     {
+        // Валидация данных
         $request->validate([
             'file' => 'required|mimes:pdf,doc,docx|max:10240', // Максимум 10MB
             'order_id' => 'required|integer',
             'user_id' => 'required|integer',
         ]);
     
+        // Логируем MIME тип файла для отладки
+        $mimeType = $request->file('file')->getMimeType();
+        Log::info("Загружаемый файл имеет MIME тип: {$mimeType}");
+    
+        // Проверка MIME типа файла
+        $allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Неверный тип файла. Разрешены только PDF, DOC и DOCX.',
+            ], 400);
+        }
+    
         // Сохраняем файл в 'public/documents', чтобы получить корректный публичный путь
-        $path = $request->file('file')->store('public/documents');
+        try {
+            $path = $request->file('file')->store('public/documents');
+        } catch (\Exception $e) {
+            Log::error('Ошибка при сохранении файла: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при загрузке файла. Пожалуйста, попробуйте позже.',
+            ], 500);
+        }
     
         // Преобразуем путь для публичного доступа
         $publicPath = '/storage' . str_replace('public', '', $path);
     
         // Сохраняем информацию о файле в базе данных
-        $document = Document::create([
-            'user_id' => $request->input('user_id'),
-            'order_id' => $request->input('order_id'),
-            'filename' => $request->file('file')->getClientOriginalName(),
-            'path' => $publicPath, // Сохраняем публичный путь
-        ]);
+        try {
+            $document = Document::create([
+                'user_id' => $request->input('user_id'),
+                'order_id' => $request->input('order_id'),
+                'filename' => $request->file('file')->getClientOriginalName(),
+                'path' => $publicPath, // Сохраняем публичный путь
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Ошибка при сохранении информации о файле в базе данных: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при сохранении данных. Пожалуйста, попробуйте позже.',
+            ], 500);
+        }
     
+        // Возвращаем успешный ответ
         return response()->json([
             'success' => true,
             'document' => $document,
         ]);
     }
+    
     
 
     public function getDocuments($orderId)
