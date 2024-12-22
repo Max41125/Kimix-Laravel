@@ -52,8 +52,7 @@ class ChatController extends Controller
     
         return response()->json($messagesWithUsernames); // Возвращаем сообщения в формате JSON
     }
-    
-    use Illuminate\Support\Facades\Log;
+   
 
     public function uploadDocument(Request $request)
     {
