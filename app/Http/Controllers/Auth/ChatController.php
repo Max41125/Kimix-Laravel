@@ -53,11 +53,13 @@ class ChatController extends Controller
         return response()->json($messagesWithUsernames); // Возвращаем сообщения в формате JSON
     }
     
+    use Illuminate\Support\Facades\Log;
+
     public function uploadDocument(Request $request)
     {
-        // Валидация данных
+        // Валидация данных: разрешаем docx, jpeg, pdf, doc
         $request->validate([
-            'file' => 'required|mimes:pdf,doc,docx|max:10240', // Максимум 10MB
+            'file' => 'required|mimes:pdf,doc,docx,jpeg,jpg|max:10240', // Максимум 10MB
             'order_id' => 'required|integer',
             'user_id' => 'required|integer',
         ]);
@@ -67,12 +69,17 @@ class ChatController extends Controller
         Log::info("Загружаемый файл имеет MIME тип: {$mimeType}");
     
         // Проверка MIME типа файла
-        $allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        $allowedMimeTypes = [
+            'application/pdf', // PDF
+            'application/msword', // DOC
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+            'image/jpeg', // JPEG
+        ];
     
         if (!in_array($mimeType, $allowedMimeTypes)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Неверный тип файла. Разрешены только PDF, DOC и DOCX.',
+                'message' => 'Неверный тип файла. Разрешены только PDF, DOC, DOCX, и JPEG.',
             ], 400);
         }
     
@@ -112,6 +119,7 @@ class ChatController extends Controller
             'document' => $document,
         ]);
     }
+    
     
     
 
