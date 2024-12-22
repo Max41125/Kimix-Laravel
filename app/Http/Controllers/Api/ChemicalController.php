@@ -66,38 +66,46 @@ class ChemicalController extends Controller
     public function search(Request $request)
     {
         $searchTerm = $request->input('q');
-
+    
         if (!$searchTerm) {
             return response()->json(['message' => 'No search term provided'], 400);
         }
-
+    
         // Логируем полученный запрос для отладки
         \Log::info("Search term: {$searchTerm}");
-
+    
+        // Если запрос не начинается с 'InChI=', добавляем его для поиска по inchi
+        if (strpos(strtolower($searchTerm), 'inchi=') !== 0) {
+            $searchTerm2 = 'InChI=' . $searchTerm;
+        } else {
+            $searchTerm2 = $searchTerm;
+        }
+    
         // Выполняем точный поиск в таблице chemicals
         $query = Chemical::query();
-
-        $query->where(function ($q) use ($searchTerm) {
+    
+        $query->where(function ($q) use ($searchTerm, $searchTerm2) {
             $q->whereRaw('LOWER(title) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(name) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(cas_number) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(formula) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(russian_common_name) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(inchi) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(smiles) = LOWER(?)', [$searchTerm]);
+                ->orWhereRaw('LOWER(name) = LOWER(?)', [$searchTerm])
+                ->orWhereRaw('LOWER(cas_number) = LOWER(?)', [$searchTerm])
+                ->orWhereRaw('LOWER(formula) = LOWER(?)', [$searchTerm])
+                ->orWhereRaw('LOWER(russian_common_name) = LOWER(?)', [$searchTerm])
+                ->orWhereRaw('LOWER(inchi) = LOWER(?)', [$searchTerm2])  // Поиск по inchi с префиксом
+                ->orWhereRaw('LOWER(smiles) = LOWER(?)', [$searchTerm]);
         });
-
+    
         // Добавляем точный поиск по синонимам (таблица chemical_synonyms)
         $query->orWhereHas('chemicalSynonyms', function ($q) use ($searchTerm) {
             $q->whereRaw('LOWER(name) = LOWER(?)', [$searchTerm])
-            ->orWhereRaw('LOWER(russian_name) = LOWER(?)', [$searchTerm]);
+                ->orWhereRaw('LOWER(russian_name) = LOWER(?)', [$searchTerm]);
         });
-
+    
         // Выполнение запроса
         $chemicals = $query->get();
-
+    
         return response()->json($chemicals);
     }
+    
 
     
     
