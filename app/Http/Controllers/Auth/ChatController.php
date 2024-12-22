@@ -47,6 +47,7 @@ class ChatController extends Controller
                 'user_id' => $message->user_id,
                 'username' => $message->user ? $message->user->name : null, // Получаем имя пользователя
                 'order_id' => $message->order_id,
+                'created_at' => $message->created_at,
             ];
         });
     
