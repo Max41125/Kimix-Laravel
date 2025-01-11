@@ -20,7 +20,7 @@ class MessageSent implements ShouldBroadcast
     public $userId; // Измените на правильное имя переменной, если нужно
     public $orderId; // Хранение orderId
     public $username;
-
+    
     public function __construct($message, $userId, $orderId, $username)
     {
 
