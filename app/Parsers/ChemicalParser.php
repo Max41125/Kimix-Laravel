@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use App\Models\Chemical;
 use App\Models\CasNumber;
 use App\Models\ChemicalSynonym; 
+use App\Models\ParsingProgress;
 use Exception;
 use Illuminate\Console\Command;
 
@@ -21,11 +22,11 @@ class ChemicalParser
     public function parseAll()
     {
         $client = new Client();
-        $startCID = 1700; // Начальный CID
+       
         $endCID = 3000000; // Конечный CID
         $pageSize = 100; // Количество записей на странице
         $maxRetries = 3;
-        
+        $startCID = (int) ParsingProgress::where('key', 'last_processed_cid')->value('value') ?? 11421;
         while ($startCID <= $endCID) { // Цикл по диапазону CID
             $cidRange = implode(',', range($startCID, min($startCID + $pageSize - 1, $endCID)));
             $this->command->info("Fetching CIDs: {$cidRange}"); // Отладочное сообщение
