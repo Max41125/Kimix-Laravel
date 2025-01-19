@@ -10,11 +10,17 @@ use App\Http\Controllers\Auth\ChatController;
 use App\Http\Controllers\YourProtectedController;
 use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\UserAddressController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+    Route::post('/reset-password', [PasswordResetController::class, 'reset']);
+
+
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::get('/chat/messages/{orderId}', [ChatController::class, 'getMessages']);
