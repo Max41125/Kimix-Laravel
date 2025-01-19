@@ -29,6 +29,7 @@ class ChemicalParser
         $startCID = (int) ParsingProgress::where('key', 'last_processed_cid')->value('value') ?? 11421;
         while ($startCID <= $endCID) { // Цикл по диапазону CID
             $cidRange = implode(',', range($startCID, min($startCID + $pageSize - 1, $endCID)));
+            $this->command->info("START CIDs: {$startCID}"); // Отладочное сообщение
             $this->command->info("Fetching CIDs: {$cidRange}"); // Отладочное сообщение
     
             // Используем API-метод для получения свойств соединений
