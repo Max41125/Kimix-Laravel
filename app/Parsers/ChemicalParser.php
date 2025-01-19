@@ -28,6 +28,12 @@ class ChemicalParser
         $maxRetries = 3;
         $startCID = (int) ParsingProgress::where('key', 'last_processed_cid')->value('value') ?? 11421;
         while ($startCID <= $endCID) { // Цикл по диапазону CID
+
+            // Обработка ошибок при попытке получения свойств соединений
+            if ($startCID === 0) {
+                $startCID = 11421;
+            }
+
             $cidRange = implode(',', range($startCID, min($startCID + $pageSize - 1, $endCID)));
             $this->command->info("START CIDs: {$startCID}"); // Отладочное сообщение
             $this->command->info("Fetching CIDs: {$cidRange}"); // Отладочное сообщение
@@ -108,7 +114,11 @@ class ChemicalParser
             } else {
                 $this->command->error("Ошибка при обращении к API: " . $response->getStatusCode());
             }
-    
+            ParsingProgress::updateOrCreate(
+                ['key' => 'last_processed_cid'],
+                ['value' => (string) $startCID]
+            );
+            
             $startCID += $pageSize; // Переход к следующему диапазону CID
         }
     }
