@@ -49,12 +49,12 @@ class PasswordResetController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
+            'email' => 'required|email',
             'current_password' => 'required',
             'new_password' => 'required|min:8|confirmed',
         ]);
 
-        $user = Auth::user();
-
+        $user = User::where('email', $credentials['email'])->first();
         // Проверяем, совпадает ли текущий пароль
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json(['message' => 'Текущий пароль неверный'], 403);
