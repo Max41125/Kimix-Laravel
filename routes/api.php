@@ -21,6 +21,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset-password', [PasswordResetController::class, 'reset']);
     Route::post('/update-password', [PasswordResetController::class, 'updatePassword']);
 
+    Route::get('/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+    
 
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);

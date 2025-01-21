@@ -17,7 +17,7 @@ class PasswordResetController extends Controller
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-
+        
         $response = Password::sendResetLink(
             $request->only('email')
         );
@@ -26,7 +26,11 @@ class PasswordResetController extends Controller
             ? response()->json(['message' => Lang::get($response)], 200)
             : response()->json(['message' => Lang::get($response)], 400);
     }
-
+    public function showResetForm($token)
+    {
+        return view('auth.reset-password', ['token' => $token]);
+    }
+    
     /**
      * Сброс пароля через токен.
      */
