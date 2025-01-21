@@ -41,4 +41,28 @@ class PasswordResetController extends Controller
             ? response()->json(['message' => 'Password has been reset successfully'], 200)
             : response()->json(['message' => 'Failed to reset password'], 400);
     }
+    
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Проверяем, совпадает ли текущий пароль
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Текущий пароль неверный'], 403);
+        }
+
+        // Обновляем пароль
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Пароль успешно обновлён']);
+    }
+
+
+
 }

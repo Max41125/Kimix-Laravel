@@ -19,6 +19,7 @@ Route::prefix('auth')->group(function () {
 
     Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
     Route::post('/reset-password', [PasswordResetController::class, 'reset']);
+    Route::post('/update-password', [PasswordResetController::class, 'updatePassword']);
 
 
     Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
