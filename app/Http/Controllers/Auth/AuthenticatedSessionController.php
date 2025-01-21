@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
             Log::info('Пароли совпадают для пользователя:', ['email' => $credentials['email']]);
         } else {
             Log::warning('Пароли не совпадают или пользователь не найден:', $credentials);
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json(['message' => 'Пароли не совпадают или пользователь не найден'], 401);
         }
 
         // Логируем попытку входа
@@ -59,7 +59,7 @@ class AuthenticatedSessionController extends Controller
     
         // Неверные учетные данные
         Log::warning('Invalid login attempt with credentials:', $credentials);
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(['message' => 'Неверные учетные данные'], 401);
     }
     
     public function destroy(Request $request)
