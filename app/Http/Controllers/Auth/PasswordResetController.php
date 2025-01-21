@@ -48,29 +48,32 @@ class PasswordResetController extends Controller
     
     public function updatePassword(Request $request)
     {
+        // Validate the request
         $request->validate([
             'email' => 'required|email',
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-            'new_password_confirmation' => 'required|min:8|confirmed',
+            'new_password' => 'required|min:8|confirmed', // This checks for new_password_confirmation
         ]);
-
-        $user = User::where('email', $credentials['email'])->first();
-        // Проверяем, совпадает ли текущий пароль
+    
+        // Find the user by email
+        $user = User::where('email', $request->email)->first();
+    
+        if (!$user) {
+            return response()->json(['message' => 'Пользователь не найден'], 404);
+        }
+    
+        // Check if the current password matches
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json(['message' => 'Текущий пароль неверный'], 403);
         }
-
-        if ($request->new_password != $request->new_password_confirmation) {
-
-            return response()->json(['message' => 'Новый пароль не совпадает'], 403);
-        }
-        // Обновляем пароль
+    
+        // Update the user's password
         $user->password = Hash::make($request->new_password);
         $user->save();
-
-        return response()->json(['message' => 'Пароль успешно обновлён']);
+    
+        return response()->json(['message' => 'Пароль успешно обновлён'], 200);
     }
+    
 
 
 
