@@ -21,7 +21,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset-password', [PasswordResetController::class, 'reset']);
     Route::post('/update-password', [PasswordResetController::class, 'updatePassword']);
 
-    Route::get('/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::get('/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 
     
 
