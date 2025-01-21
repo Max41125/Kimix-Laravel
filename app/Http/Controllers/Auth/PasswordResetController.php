@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
-
 class PasswordResetController extends Controller
 {
+    /**
+     * Отправка ссылки для сброса пароля.
+     */
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -20,11 +22,14 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
-        return $response == Password::RESET_LINK_SENT
+        return $response === Password::RESET_LINK_SENT
             ? response()->json(['message' => Lang::get($response)], 200)
             : response()->json(['message' => Lang::get($response)], 400);
     }
 
+    /**
+     * Сброс пароля через токен.
+     */
     public function reset(Request $request)
     {
         $request->validate([
@@ -36,45 +41,44 @@ class PasswordResetController extends Controller
         $response = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                $user->password = bcrypt($password);
+                // Используем мутатор для установки нового пароля
+                $user->password = $password; 
                 $user->save();
             }
         );
 
-        return $response == Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Password has been reset successfully'], 200)
-            : response()->json(['message' => 'Failed to reset password'], 400);
+        return $response === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Пароль успешно сброшен'], 200)
+            : response()->json(['message' => 'Не удалось сбросить пароль'], 400);
     }
-    
+
+    /**
+     * Обновление пароля текущим авторизованным пользователем.
+     */
     public function updatePassword(Request $request)
     {
-        // Validate the request
         $request->validate([
             'email' => 'required|email',
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed', // This checks for new_password_confirmation
+            'new_password' => 'required|min:8|confirmed', // Проверка подтверждения
         ]);
-    
-        // Find the user by email
+
+        // Ищем пользователя по email
         $user = User::where('email', $request->email)->first();
-    
+
         if (!$user) {
             return response()->json(['message' => 'Пользователь не найден'], 404);
         }
-    
-        // Check if the current password matches
+
+        // Проверяем текущий пароль
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json(['message' => 'Текущий пароль неверный'], 403);
         }
-    
-        // Update the user's password
+
+        // Обновляем пароль (мутатор автоматически выполнит хэширование)
         $user->password = $request->new_password;
         $user->save();
-    
+
         return response()->json(['message' => 'Пароль успешно обновлён'], 200);
     }
-    
-
-
-
 }
