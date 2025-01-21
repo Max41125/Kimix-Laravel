@@ -52,6 +52,7 @@ class PasswordResetController extends Controller
             'email' => 'required|email',
             'current_password' => 'required',
             'new_password' => 'required|min:8|confirmed',
+            'new_password_confirmation' => 'required|min:8|confirmed',
         ]);
 
         $user = User::where('email', $credentials['email'])->first();
@@ -60,6 +61,10 @@ class PasswordResetController extends Controller
             return response()->json(['message' => 'Текущий пароль неверный'], 403);
         }
 
+        if ($request->new_password != $request->new_password_confirmation) {
+
+            return response()->json(['message' => 'Новый пароль не совпадает'], 403);
+        }
         // Обновляем пароль
         $user->password = Hash::make($request->new_password);
         $user->save();
