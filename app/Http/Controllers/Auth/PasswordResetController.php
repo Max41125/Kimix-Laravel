@@ -28,8 +28,11 @@ class PasswordResetController extends Controller
     }
     public function showResetForm($token)
     {
-        return view('auth.reset-password', ['token' => $token]);
+        // Перенаправляем на фронтенд с токеном
+        return redirect()->to('https://kimix.space/auth/reset-password?token=' . $token);
+
     }
+    
     
     /**
      * Сброс пароля через токен.
