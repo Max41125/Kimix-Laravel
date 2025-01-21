@@ -36,7 +36,7 @@ class PasswordResetController extends Controller
         }
     
         // Перенаправляем на фронтенд с токеном и email в URL
-        return redirect()->to('https://kimix.space/auth/reset-password?token=' . $token . '&email=' . urlencode($email));
+        return redirect()->to(env('FRONTEND_URL') . './auth/reset-password?token=' . $token . '&email=' . urlencode($email));
     }
     
     
