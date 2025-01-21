@@ -28,10 +28,17 @@ class PasswordResetController extends Controller
     }
     public function showResetForm($token)
     {
-        // Перенаправляем на фронтенд с токеном
-        return redirect()->to('https://kimix.space/auth/reset-password?token=' . $token);
-
+        $email = request('email');  // Извлекаем email из запроса
+    
+        // Проверяем, есть ли email в запросе
+        if (!$email) {
+            return response()->json(['message' => 'Email не передан'], 400);
+        }
+    
+        // Перенаправляем на фронтенд с токеном и email в URL
+        return redirect()->to('https://kimix.space/auth/reset-password?token=' . $token . '&email=' . urlencode($email));
     }
+    
     
     
     /**
