@@ -63,7 +63,7 @@ class PasswordResetController extends Controller
 
         return $response === Password::PASSWORD_RESET
             ? response()->json(['message' => 'Пароль успешно сброшен'], 200)
-            : response()->json(['message' => 'Не удалось сбросить пароль'], 400);
+            : response()->json(['error' => 'Не удалось сбросить пароль'], 400);
     }
 
     /**
@@ -81,12 +81,12 @@ class PasswordResetController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Пользователь не найден'], 404);
+            return response()->json(['error' => 'Пользователь не найден'], 404);
         }
 
         // Проверяем текущий пароль
         if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Текущий пароль неверный'], 403);
+            return response()->json(['error' => 'Текущий пароль неверный'], 403);
         }
 
         // Обновляем пароль (мутатор автоматически выполнит хэширование)
