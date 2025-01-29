@@ -126,32 +126,41 @@ class ChemicalParser
     private function fetchCasNumbersByInChI($client, $InChI)
     {
         $baseUrl = 'https://commonchemistry.cas.org/api/search';
-        $response = $client->get($baseUrl, [
-            'query' => [
-                'q' => $InChI,
-            ]
-        ]);
     
-        if ($response->getStatusCode() == 200) {
-            $body = $response->getBody()->getContents();
-            $data = json_decode($body, true);
+        try {
+            $response = $client->get($baseUrl, [
+                'query' => [
+                    'q' => $InChI,
+                ]
+            ]);
     
-            if (isset($data['results'][0]['rn'])) {
-                $casNumber = $data['results'][0]['rn']; // CAS номер
-                $image = $data['results'][0]['image'] ?? null; // Получаем изображение (SVG)
+            if ($response->getStatusCode() == 200) {
+                $body = $response->getBody()->getContents();
+                $data = json_decode($body, true);
     
-                return [
-                    'cas_number' => $casNumber,
-                    'image' => $image,
-                ];
-            } else {
-                $this->command->info("CAS номер не найден для InChI: {$InChI}");
-                return ['cas_number' => null, 'image' => null];
+                if (isset($data['results'][0]['rn'])) {
+                    $casNumber = $data['results'][0]['rn'];
+                    $image = $data['results'][0]['image'] ?? null;
+    
+                    return [
+                        'cas_number' => $casNumber,
+                        'image' => $image,
+                    ];
+                } else {
+                    $this->command->error("CAS номер не найден для InChI: {$InChI}");
+                }
             }
-        } else {
-            $this->command->info("Не удалось получить CAS номер для InChI: {$InChI} с кодом статуса: " . $response->getStatusCode());
-            return ['cas_number' => null, 'image' => null];
+        } catch (\GuzzleHttp\Exception\ServerException $e) {
+            $this->command->error("ServerException: " . $e->getMessage());
+        } catch (\Exception $e) {
+            $this->command->error("Exception: " . $e->getMessage());
         }
+    
+        // Если ошибка - возвращаем пустой результат, чтобы скрипт не падал
+        return [
+            'cas_number' => null,
+            'image' => null,
+        ];
     }
 
     private function fetchChemicalSynonyms($client, $cid, $maxRetries)
