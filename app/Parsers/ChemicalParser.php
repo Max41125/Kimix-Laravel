@@ -127,45 +127,32 @@ class ChemicalParser
     {
         $baseUrl = 'https://commonchemistry.cas.org/api/search';
     
+        if (empty($InChI)) {
+            $this->command->error("Ошибка: InChI пуст.");
+            return ['cas_number' => null, 'image' => null];
+        }
+    
         try {
             $response = $client->get($baseUrl, [
-                'query' => [
-                    'q' => $InChI,
-                ]
+                'query' => ['q' => $InChI]
             ]);
     
             if ($response->getStatusCode() == 200) {
                 $body = $response->getBody()->getContents();
                 $data = json_decode($body, true);
     
-                if (isset($data['results'][0]['rn'])) {
-                    $casNumber = $data['results'][0]['rn'];
-                    $image = $data['results'][0]['image'] ?? null;
-    
+                if (!empty($data['results'][0]['rn'])) {
                     return [
-                        'cas_number' => $casNumber,
-                        'image' => $image,
+                        'cas_number' => $data['results'][0]['rn'],
+                        'image' => $data['results'][0]['image'] ?? null,
                     ];
-                } else {
-                    $this->command->error("CAS номер не найден для InChI: {$InChI}");
                 }
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            \Log::warning("ClientException: " . $e->getMessage());
-            return ['cas_number' => null, 'image' => null]; // Возвращаем пустой результат, а не прерываем скрипт
-        } catch (\GuzzleHttp\Exception\ServerException $e) {
-            \Log::error("ServerException: " . $e->getMessage());
-            return ['cas_number' => null, 'image' => null];
-        } catch (\Throwable $e) {
-            \Log::error("Exception: " . $e->getMessage());
-            return ['cas_number' => null, 'image' => null];
+        } catch (\Exception $e) {
+            \Log::error("Ошибка CAS API: " . $e->getMessage());
         }
     
-        // Если ошибка - возвращаем пустой результат, чтобы скрипт не падал
-        return [
-            'cas_number' => null,
-            'image' => null,
-        ];
+        return ['cas_number' => null, 'image' => null];
     }
 
     private function fetchChemicalSynonyms($client, $cid, $maxRetries)
@@ -264,28 +251,30 @@ class ChemicalParser
     private function fetchDescriptionByCID($client, $cid)
     {
         $url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{$cid}/description/json";
-        $response = $client->get($url);
     
-        if ($response->getStatusCode() == 200) {
-            $body = $response->getBody()->getContents();
-            $data = json_decode($body, true);
-            $content = $data['InformationList']['Information'];
+        try {
+            $response = $client->get($url);
     
-            // Перебираем массив Information, чтобы найти описание
-            foreach ($content as $info) {
-                if (isset($info['Description'])) {
-                    return $info['Description'];
+            if ($response->getStatusCode() == 200) {
+                $body = json_decode($response->getBody()->getContents(), true);
+                foreach ($body['InformationList']['Information'] ?? [] as $info) {
+                    if (!empty($info['Description'])) {
+                        return $info['Description'];
+                    }
                 }
             }
-    
-            // Если не нашли описание
-            $this->command->info("Описание не найдено для CID: {$cid}");
-            return '';
-        } else {
-            $this->command->info("Не удалось получить описание для CID: {$cid} с кодом статуса: " . $response->getStatusCode());
-            return '';
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            if ($e->getCode() == 404) {
+                $this->command->info("Описание отсутствует для CID: {$cid}");
+                return ''; // Возвращаем пустую строку вместо ошибки
+            }
+        } catch (\Exception $e) {
+            \Log::error("Ошибка при запросе описания CID {$cid}: " . $e->getMessage());
         }
+    
+        return '';
     }
+    
 
     private function fetchRussianCommonName($title)
     {
