@@ -150,10 +150,15 @@ class ChemicalParser
                     $this->command->error("CAS номер не найден для InChI: {$InChI}");
                 }
             }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            \Log::warning("ClientException: " . $e->getMessage());
+            return ['cas_number' => null, 'image' => null]; // Возвращаем пустой результат, а не прерываем скрипт
         } catch (\GuzzleHttp\Exception\ServerException $e) {
-            $this->command->error("ServerException: " . $e->getMessage());
-        } catch (\Exception $e) {
-            $this->command->error("Exception: " . $e->getMessage());
+            \Log::error("ServerException: " . $e->getMessage());
+            return ['cas_number' => null, 'image' => null];
+        } catch (\Throwable $e) {
+            \Log::error("Exception: " . $e->getMessage());
+            return ['cas_number' => null, 'image' => null];
         }
     
         // Если ошибка - возвращаем пустой результат, чтобы скрипт не падал
