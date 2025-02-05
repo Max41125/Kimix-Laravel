@@ -21,10 +21,10 @@ class AuthenticatedSessionController extends Controller
     
         // Проверяем, передано ли remember для "Запомнить меня"
         $remember = $request->has('remember') ? $request->boolean('remember') : false;
-
+    
         // Получаем пользователя по email
         $user = User::where('email', $credentials['email'])->first();
-
+    
         // Проверяем, существует ли пользователь и совпадает ли пароль
         if ($user && Hash::check($request->password, $user->password)) {
             Log::info('Пароли совпадают для пользователя:', ['email' => $credentials['email']]);
@@ -32,9 +32,12 @@ class AuthenticatedSessionController extends Controller
             Log::warning('Пароли не совпадают или пользователь не найден:', $credentials);
             return response()->json(['message' => 'Неверный пароль или email'], 401);
         }
-
+    
         // Логируем попытку входа
         Log::info('Attempting login for:', $credentials);
+    
+        // Устанавливаем продолжительность сессии в зависимости от флага "remember"
+        $sessionDuration = $remember ? 60 * 24 * 30 : 60 * 24; // 30 дней или 1 день
     
         // Аутентификация пользователя с флагом "Remember me"
         if (Auth::attempt($credentials, $remember)) {
@@ -42,25 +45,29 @@ class AuthenticatedSessionController extends Controller
     
             // Генерация API токена
             $token = $user->generateToken();
-            
-                // Проверка на подтверждение email
-                $verify = !is_null($user->email_verified_at);
-
-                return response()->json([
-                    'message' => 'Login successful',
-                    'token' => $token,
-                    'verify' => $verify,
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role,
-                ], 200);
+    
+            // Проверка на подтверждение email
+            $verify = !is_null($user->email_verified_at);
+    
+            // Устанавливаем продолжительность сессии
+            $cookie = cookie('remember_token', $token, $sessionDuration);
+    
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token,
+                'verify' => $verify,
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ], 200)->cookie($cookie); // Возвращаем сессионный cookie
         }
     
         // Неверные учетные данные
         Log::warning('Invalid login attempt with credentials:', $credentials);
         return response()->json(['message' => 'Неверные учетные данные'], 401);
     }
+    
     
     public function destroy(Request $request)
     {
