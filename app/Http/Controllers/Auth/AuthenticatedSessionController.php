@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
             Log::info('Пароли совпадают для пользователя:', ['email' => $credentials['email']]);
         } else {
             Log::warning('Пароли не совпадают или пользователь не найден:', $credentials);
-            return response()->json(['message' => 'Пароли не совпадают или пользователь не найден'], 401);
+            return response()->json(['message' => 'Неверный пароль или email'], 401);
         }
 
         // Логируем попытку входа
@@ -65,19 +65,19 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         Auth::logout();
-        return response()->json(['message' => 'Logged out successfully'], 200);
+        return response()->json(['message' => 'Выход успешен'], 200);
     }
 
     public function sendVerificationEmail(Request $request)
     {
         // Проверяем, аутентифицирован ли пользователь
         if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email is already verified.'], 400);
+            return response()->json(['message' => 'Почта уже верифицирована.'], 400);
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        return response()->json(['message' => 'Verification email sent'], 200);
+        return response()->json(['message' => 'Подтверждение отправлено на почту'], 200);
     }
 
     // Метод для отображения формы входа
