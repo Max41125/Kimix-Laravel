@@ -50,7 +50,8 @@ class AuthenticatedSessionController extends Controller
             $verify = !is_null($user->email_verified_at);
     
             // Устанавливаем продолжительность сессии
-            $cookie = cookie('remember_token', $token, $sessionDuration);
+            $cookie = cookie('remember_token', $token, $sessionDuration, null, null, false, false);
+
     
             return response()->json([
                 'message' => 'Login successful',
