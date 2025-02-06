@@ -65,6 +65,7 @@ class OrderController extends Controller
                 'price' => $product['price'],
                 'quantity' => $product['quantity'],
                 'currency' => $product['currency'],
+                'description' => $product['description'],
                 'supplier_id' => $product['supplier_id'], // Добавлено поле supplier_id
             ]);
         }
@@ -126,7 +127,7 @@ class OrderController extends Controller
         $user = User::findOrFail($userId);
     
         // Получить список связанных продуктов
-        $products = $user->chemicals()->withPivot(['unit_type', 'price', 'currency'])->get();
+        $products = $user->chemicals()->withPivot(['unit_type', 'price', 'currency', 'description'])->get();
     
         // Вернуть список продуктов
         return response()->json($products, 200);
