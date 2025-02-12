@@ -27,18 +27,30 @@ class SubscriptionController extends Controller
         $user = User::find($request->user_id);
     
         $subscriptionData = [
-            'chemical_id' => $request->chemical_id,
             'type' => $request->type,
             'duration' => $request->duration,
             'start_date' => now(),
             'end_date' => $this->parseDuration($request->duration),
-
         ];
     
-        $subscription = $user->subscriptions()->create($subscriptionData);
+        // Проверяем, есть ли уже подписка для данного user_id и chemical_id
+        $subscription = Subscription::where('user_id', $request->user_id)
+            ->where('chemical_id', $request->chemical_id)
+            ->first();
     
-        return response()->json($subscription, 201);
+        if ($subscription) {
+            // Если подписка уже есть, просто обновляем данные
+            $subscription->update($subscriptionData);
+            return response()->json(['message' => 'Subscription updated', 'subscription' => $subscription], 200);
+        } else {
+            // Если подписки нет, создаем новую
+            $subscriptionData['user_id'] = $request->user_id;
+            $subscriptionData['chemical_id'] = $request->chemical_id;
+            $subscription = Subscription::create($subscriptionData);
+            return response()->json(['message' => 'Subscription created', 'subscription' => $subscription], 200);
+        }
     }
+    
 
 
     function parseDuration($duration) {
