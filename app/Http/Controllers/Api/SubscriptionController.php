@@ -76,7 +76,7 @@ class SubscriptionController extends Controller
         $subscriptions = $user->subscriptions;
     
         if ($subscriptions->isEmpty()) {
-            return response()->json(['message' => 'Подписки не найдены'], 204);
+            return response()->json(['message' => 'Подписки не найдены'], 200);
         }
     
         return response()->json($subscriptions);
