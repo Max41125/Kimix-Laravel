@@ -25,12 +25,31 @@ class SubscriptionController extends Controller
     
         $user = User::find($request->user_id);
     
+        $startDate = new DateTime();
+        
+        switch ($request->duration) {
+            case '3 months':
+                $endDate = (clone $startDate)->modify('+3 months');
+                break;
+            case '6 months':
+                $endDate = (clone $startDate)->modify('+6 months');
+                break;
+            case '1 year':
+                $endDate = (clone $startDate)->modify('+1 year');
+                break;
+            case '3 years':
+                $endDate = (clone $startDate)->modify('+3 years');
+                break;
+            default:
+                return response()->json(['error' => 'Invalid duration'], 422);
+        }
+        
         $subscriptionData = [
-            'chemical_id' => $request->chemical_id, // Добавлено
+            'chemical_id' => $request->chemical_id,
             'type' => $request->type,
             'duration' => $request->duration,
-            'start_date' => now(),
-            'end_date' => now()->add($request->duration),
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'), // Форматируем дату
         ];
     
         $subscription = $user->subscriptions()->create($subscriptionData);
