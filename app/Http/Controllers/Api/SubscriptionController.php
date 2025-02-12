@@ -31,7 +31,8 @@ class SubscriptionController extends Controller
             'type' => $request->type,
             'duration' => $request->duration,
             'start_date' => now(),
-            'end_date' => parseDuration($request->duration),
+            'end_date' => $this->parseDuration($request->duration),
+
         ];
     
         $subscription = $user->subscriptions()->create($subscriptionData);
