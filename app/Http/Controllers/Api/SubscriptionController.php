@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 
 class SubscriptionController extends Controller
 {
@@ -14,7 +15,7 @@ class SubscriptionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'chemical_id' => 'required|exists:chemicals,id', // Добавлено
+            'chemical_id' => 'required|exists:chemicals,id',
             'type' => 'required|in:buyer,seller,student',
             'duration' => 'required|in:3 months,6 months,1 year,3 years',
         ]);
@@ -25,37 +26,30 @@ class SubscriptionController extends Controller
     
         $user = User::find($request->user_id);
     
-        $startDate = new DateTime();
-        
-        switch ($request->duration) {
-            case '3 months':
-                $endDate = (clone $startDate)->modify('+3 months');
-                break;
-            case '6 months':
-                $endDate = (clone $startDate)->modify('+6 months');
-                break;
-            case '1 year':
-                $endDate = (clone $startDate)->modify('+1 year');
-                break;
-            case '3 years':
-                $endDate = (clone $startDate)->modify('+3 years');
-                break;
-            default:
-                return response()->json(['error' => 'Invalid duration'], 422);
-        }
-        
         $subscriptionData = [
             'chemical_id' => $request->chemical_id,
             'type' => $request->type,
             'duration' => $request->duration,
-            'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d'), // Форматируем дату
+            'start_date' => now(),
+            'end_date' => parseDuration($request->duration),
         ];
     
         $subscription = $user->subscriptions()->create($subscriptionData);
     
         return response()->json($subscription, 201);
     }
+
+
+    function parseDuration($duration) {
+        switch ($duration) {
+            case '3 months': return Carbon::now()->addMonths(3);
+            case '6 months': return Carbon::now()->addMonths(6);
+            case '1 year': return Carbon::now()->addYear();
+            case '3 years': return Carbon::now()->addYears(3);
+            default: return Carbon::now(); 
+        }
+    }
+
 
     public function updateSubscription(Request $request, $id)
     {
