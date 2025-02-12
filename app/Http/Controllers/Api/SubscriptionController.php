@@ -73,9 +73,15 @@ class SubscriptionController extends Controller
     public function getUserSubscriptions($userId)
     {
         $user = User::findOrFail($userId);
-        
-        return response()->json($user->subscriptions);
+        $subscriptions = $user->subscriptions;
+    
+        if ($subscriptions->isEmpty()) {
+            return response()->json(['message' => 'Подписки не найдены'], 204);
+        }
+    
+        return response()->json($subscriptions);
     }
+    
     
     // Для интегроации эквайринга
 
