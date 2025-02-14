@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chemical;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 
 class ChemicalController extends Controller
@@ -106,22 +107,47 @@ class ChemicalController extends Controller
         return response()->json($chemicals);
     }
     
-
-    
-    
-    public function getSuppliersByChemicalId($chemicalId)
+    public function checkSuppliersExistence($chemicalId)
     {
         // Находим химическое вещество по ID
         $chemical = Chemical::findOrFail($chemicalId);
         
+        // Проверяем, есть ли поставщики
+        $hasSuppliers = $chemical->users()->exists();
+        
+        return response()->json(['has_suppliers' => $hasSuppliers], 200);
+    }
+    
+
+    public function getSuppliersByChemicalId($chemicalId, $userId)
+    {
+        // Проверяем, есть ли подписка у пользователя
+        $subscription = Subscription::where('user_id', $userId)
+            ->where('chemical_id', $chemicalId)
+            ->first();
+    
+        if (!$subscription) {
+            return response()->json(['error' => 'No subscription found for this chemical.'], 403);
+        }
+    
+        // Проверяем, не закончилась ли подписка
+        if ($subscription->end_date < now()) {
+            return response()->json(['error' => 'Subscription has expired.'], 403);
+        }
+    
+        // Находим химическое вещество по ID
+        $chemical = Chemical::findOrFail($chemicalId);
+        
         // Получаем поставщиков с данными из таблицы pivot (chemical_user)
-        $suppliers = $chemical->users()->select('users.id','users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
+        $suppliers = $chemical->users()->select('users.id', 'users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
             ->get();
         
         return response()->json($suppliers, 200);
     }
-
-
+    
+    
+    
+    
 
 }
 

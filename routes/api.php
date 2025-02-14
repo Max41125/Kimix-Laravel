@@ -31,7 +31,8 @@ Route::prefix('auth')->group(function () {
     Route::put('/subscriptions/{id}', [SubscriptionController::class, 'updateSubscription']);
     Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'cancelSubscription']);
 
-    Route::get('/chemicals/{id}/suppliers', [ChemicalController::class, 'getSuppliersByChemicalId']);
+    Route::get('/chemicals/{chemicalId}/suppliers/{userId}', [ChemicalController::class, 'getSuppliersByChemicalId']);
+    
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::get('/chat/messages/{orderId}', [ChatController::class, 'getMessages']);
     Route::post('/chat/upload', [ChatController::class, 'uploadDocument']);
