@@ -145,7 +145,18 @@ class ChemicalController extends Controller
         return response()->json($suppliers, 200);
     }
     
-    
+        
+    public function getSuppliersByChemicalIdOld($chemicalId)
+    {
+        // Находим химическое вещество по ID
+        $chemical = Chemical::findOrFail($chemicalId);
+        
+        // Получаем поставщиков с данными из таблицы pivot (chemical_user)
+        $suppliers = $chemical->users()->select('users.id','users.name', 'chemical_user.unit_type', 'chemical_user.price', 'chemical_user.currency')
+            ->get();
+        
+        return response()->json($suppliers, 200);
+    }
     
     
 
