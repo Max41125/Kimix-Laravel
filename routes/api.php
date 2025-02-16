@@ -32,7 +32,6 @@ Route::prefix('auth')->group(function () {
     Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'cancelSubscription']);
 
     Route::get('/chemicals/{chemicalId}/suppliers/{userId}', [ChemicalController::class, 'getSuppliersByChemicalId']);
-    Route::get('/chemicals/{chemicalId}/suppliers/', [ChemicalController::class, 'getSuppliersByChemicalIdOld']);
 
 
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
