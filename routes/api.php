@@ -31,6 +31,7 @@ Route::prefix('auth')->group(function () {
     Route::put('/subscriptions/{id}', [SubscriptionController::class, 'updateSubscription']);
     Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'cancelSubscription']);
 
+    Route::get('/chemicals/{chemicalId}/suppliers/', [ChemicalController::class, 'checkSuppliersExistence']);
     Route::get('/chemicals/{chemicalId}/suppliers/{userId}', [ChemicalController::class, 'getSuppliersByChemicalId']);
 
 
