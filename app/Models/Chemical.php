@@ -39,7 +39,7 @@ class Chemical extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'chemical_order')
-                    ->withPivot('unit_type', 'price', 'currency', 'supplier_id', 'quantity')
+                    ->withPivot('unit_type', 'price', 'currency', 'supplier_id', 'quantity', 'product_id')
                     ->withTimestamps();
     }
 
