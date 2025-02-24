@@ -156,10 +156,12 @@ class OrderController extends Controller
         ->with(['products' => function ($query) use ($sellerId) {
             // Загружаем все продукты для этих заказов и фильтруем по sellerId
             $query->where('chemical_order.supplier_id', $sellerId)
-                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id');
+                ->join('chemical_user', 'chemical_order.product_id', '=', 'chemical_user.id') // Соединяем с chemical_user
+                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id')
+                ->select('chemical_order.*', 'chemical_user.description as pivot_description'); // Подтягиваем описание
         }])
         ->get();
-
+    
         return response()->json($orders, 200);
     }
     
@@ -168,7 +170,9 @@ class OrderController extends Controller
         $order = Order::with([
                 'products' => function ($query) use ($orderId) {
                     $query->where('chemical_order.order_id', $orderId)
-                        ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id');
+                        ->join('chemical_user', 'chemical_order.product_id', '=', 'chemical_user.id') // Соединяем с chemical_user
+                        ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id')
+                        ->select('chemical_order.*', 'chemical_user.description as pivot_description'); // Подтягиваем описание
                 },
                 'user' => function ($query) {
                     $query->with('userAddresses'); // Подгружаем связанные адреса пользователя
@@ -184,6 +188,7 @@ class OrderController extends Controller
         // Вернуть данные о заказе, продуктах, пользователе и его адресах
         return response()->json($order, 200);
     }
+    
     
     
 
