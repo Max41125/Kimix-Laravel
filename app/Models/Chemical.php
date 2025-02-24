@@ -33,13 +33,13 @@ class Chemical extends Model
     
     public function users()
     {
-        return $this->belongsToMany(User::class, 'chemical_user');
+        return $this->belongsToMany(User::class, 'chemical_user')->withPivot('description');
     }
 
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'chemical_order')
-                    ->withPivot('unit_type', 'price', 'currency', 'supplier_id', 'quantity', 'product_id')
+                    ->withPivot('unit_type', 'price', 'currency', 'supplier_id', 'quantity', 'product_id', 'description')
                     ->withTimestamps();
     }
 
