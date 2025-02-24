@@ -65,7 +65,6 @@ class OrderController extends Controller
                 'price' => $product['price'],
                 'quantity' => $product['quantity'],
                 'currency' => $product['currency'],
-                'description' => $product['description'],
                 'supplier_id' => $product['supplier_id'], // Добавлено поле supplier_id
             ]);
         }
