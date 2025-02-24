@@ -129,7 +129,7 @@ class OrderController extends Controller
         $user = User::findOrFail($userId);
     
         // Получить список связанных продуктов
-        $products = $user->chemicals()->withPivot(['unit_type', 'price', 'currency', 'description'])->get();
+        $products = $user->chemicals()->withPivot(['unit_type', 'price', 'currency',])->get();
     
         // Вернуть список продуктов
         return response()->json($products, 200);
