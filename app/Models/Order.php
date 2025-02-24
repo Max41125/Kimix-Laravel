@@ -23,7 +23,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Chemical::class)->withPivot('unit_type', 'price', 'currency' , 'supplier_id', 'quantity', 'product_id',);
+        return $this->belongsToMany(Chemical::class)->withPivot('unit_type', 'price', 'currency' , 'supplier_id', 'quantity', 'product_id');
     }
     // Связь с пользователем
     public function user()
