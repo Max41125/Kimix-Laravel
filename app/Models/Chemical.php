@@ -40,9 +40,7 @@ class Chemical extends Model
     {
         return $this->belongsToMany(Order::class, 'chemical_order')
                     ->withPivot('unit_type', 'price', 'currency', 'supplier_id', 'quantity', 'product_id')
-                    ->withTimestamps()
-                    ->join('chemical_user', 'chemical_order.product_id', '=', 'chemical_user.id') // соединяем с chemical_user по product_id
-                    ->select('chemical_order.*', 'chemical_user.description as pivot_description');
+                    ->withTimestamps();
     }
 
 
