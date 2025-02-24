@@ -21,7 +21,8 @@ class OrderController extends Controller
             'products.*.price' => 'required|numeric|min:0',
             'products.*.quantity' => 'required|numeric|min:0',
             'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY',
-            'products.*.product_id' => 'required|exists:users,id', 
+            'products.*.product_id' => 'required|exists:chemical_user,id',
+            'products.*.supplier_id' => 'required|exists:users,id', 
             'total_price' => 'required|numeric',
             'currency' => 'required|string|in:RUB,USD,EUR,CNY',
             // User address fields
@@ -66,7 +67,8 @@ class OrderController extends Controller
                 'price' => $product['price'],
                 'quantity' => $product['quantity'],
                 'currency' => $product['currency'],
-                'product_id' => $product['product_id'], 
+                'product_id' => $product['product_id'],
+                'supplier_id' => $product['supplier_id'],
             ]);
         }
     
@@ -155,7 +157,7 @@ class OrderController extends Controller
         ->with(['products' => function ($query) use ($sellerId) {
             // Загружаем все продукты для этих заказов и фильтруем по sellerId
             $query->where('chemical_order.supplier_id', $sellerId)
-                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id');
+                ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id');
         }])
         ->get();
 
@@ -167,7 +169,7 @@ class OrderController extends Controller
         $order = Order::with([
                 'products' => function ($query) use ($orderId) {
                     $query->where('chemical_order.order_id', $orderId)
-                        ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id');
+                        ->withPivot('unit_type', 'quantity', 'price', 'currency', 'supplier_id', 'product_id');
                 },
                 'user' => function ($query) {
                     $query->with('userAddresses'); // Подгружаем связанные адреса пользователя
