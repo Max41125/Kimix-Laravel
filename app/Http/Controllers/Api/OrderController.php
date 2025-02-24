@@ -57,7 +57,6 @@ class OrderController extends Controller
             'total_price' => $request->total_price,
             'currency' => $request->currency,
             'status' => 'new',
-            'product_id' => $request->product_id,
         ]);
     
         // Attach products to the order with their details, including supplier_id
