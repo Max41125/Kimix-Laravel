@@ -21,7 +21,7 @@ class OrderController extends Controller
             'products.*.price' => 'required|numeric|min:0',
             'products.*.quantity' => 'required|numeric|min:0',
             'products.*.currency' => 'required|string|in:RUB,USD,EUR,CNY',
-            'products.*.product_id' => 'required|exists:users,id', // Добавлено поле supplier_id
+            'products.*.product_id' => 'required|exists:users,id', 
             'total_price' => 'required|numeric',
             'currency' => 'required|string|in:RUB,USD,EUR,CNY',
             // User address fields
@@ -66,7 +66,7 @@ class OrderController extends Controller
                 'price' => $product['price'],
                 'quantity' => $product['quantity'],
                 'currency' => $product['currency'],
-                'supplier_id' => $product['supplier_id'], // Добавлено поле supplier_id
+                'product_id' => $product['product_id'], 
             ]);
         }
     
