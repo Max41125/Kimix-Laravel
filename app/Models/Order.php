@@ -14,7 +14,9 @@ class Order extends Model
         'total_price',
         'currency', 
         'status',
+        'product_id',
     ];
+    
 
     protected $casts = [
         'products' => 'array', // Автоматическое преобразование JSON в массив и обратно

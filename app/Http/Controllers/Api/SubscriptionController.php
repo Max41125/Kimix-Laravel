@@ -109,7 +109,7 @@ class SubscriptionController extends Controller
     }
     
     
-    // Для интегроации эквайринга
+    // Для интеграции эквайринга
 
 
 
